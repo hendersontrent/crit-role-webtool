@@ -1,0 +1,29 @@
+## Critical Role Statistical Analysis Tool
+***
+
+### What is this application?
+
+This is a web application created to enable interactive exploration of data collected for the show [Critical Role](https://critrole.com/). The application visualises and models data regarding dice rolls, damage dealt, healing given, among much more. It is a continuous work-in-progress, and more features will be progressively added. 
+
+
+### How do I use it?
+
+Navigate through the app using the tabs at the top. Further details and instructions are provided on each tab. A high level overview of what each does presented below:
+
+* __CHARACTER ANALYSIS__ Presents character-level analysis and visualisation of dice roll data.
+* __STATISTICAL MODELLING__ Presents handwritten Bayesian state space probabilistic models of damage dealt and healing given by episode.
+
+
+### Who made it?
+
+This application was built by Trent Henderson of [Orbisant Analytics](https://www.orbisantanalytics.com/). Trent is a data scientist from Brisbane, Australia, and can be found on Twitter [@trentlikesstats](https://twitter.com/trentlikesstats) or by [email](trent.henderson1@outlook.com).
+
+
+### Where did the data come from?
+
+All data is sourced from [Crit Role Stats](https://www.critrolestats.com/).
+
+
+### Where did the artwork come from?
+
+Official Mighty Nein artwork created by [@ornerine](https://twitter.com/ornerine) and sourced from [Critical Role website](https://critrole.com/hype-new-official-mighty-nein-character-art-by-ariana-orner/).
