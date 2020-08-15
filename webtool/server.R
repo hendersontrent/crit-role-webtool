@@ -184,6 +184,84 @@ shinyServer <- function(input, output, session) {
   },
   bg = "transparent")
   
+  # Cluster analysis
+  
+  output$cluster_plot <- renderPlotly({
+    
+    # Prep
+    
+    if(input$cluster_zero_selector == "No"){
+      clus_data <- dam_heals %>%
+        mutate(character = case_when(
+          character == "Nott_veth"  ~ "Veth/Nott",
+          character == "Mollymauk"  ~ "Molly",
+          character == "Beauregard" ~ "Beau",
+          TRUE                      ~ character)) %>%
+        filter(damage != 0, healing != 0) %>%
+        drop_na() %>%
+        mutate(damage = scale(damage),
+               healing = scale(healing))
+    } else{
+      clus_data <- dam_heals %>%
+        mutate(character = case_when(
+          character == "Nott_veth"  ~ "Veth/Nott",
+          character == "Mollymauk"  ~ "Molly",
+          character == "Beauregard" ~ "Beau",
+          TRUE                      ~ character)) %>%
+        drop_na() %>%
+        mutate(damage = scale(damage),
+               healing = scale(healing))
+    }
+    
+    fit <- kmeans(clus_data[,3:4], input$num_clus)
+    str(fit)
+    clus_data$grouping <- as.factor(fit$cluster)
+    
+    # Set up palette
+    
+    if(input$num_clus == 1){
+      cluster_palette <- c("#FD62AD")
+    } else if(input$num_clus == 2){
+      cluster_palette <- c("#FD62AD", "#A0E7E5")
+    } else if(input$num_clus == 3){
+      cluster_palette <- c("#FD62AD", "#A0E7E5", "#189AB4")
+    } else if(input$num_clus == 4){
+      cluster_palette <- c("#FD62AD", "#A0E7E5", "#189AB4", "#9571AB")
+    } else if(input$num_clus == 5){
+      cluster_palette <- c("#FD62AD", "#A0E7E5", "#189AB4", "#9571AB", "#F7C9B6")
+    } else{
+      cluster_palette <- c("#FD62AD", "#A0E7E5", "#189AB4", "#9571AB", "#F7C9B6", "#E7625F")
+    }
+    
+    # Plot
+    
+    cluster_plot <- clus_data %>%
+      ggplot(aes(x = damage, y = healing, colour = grouping,
+                 text = paste('<b>Character:</b>', character,
+                              '<br><b>Cluster:</b>', grouping,
+                              '<b>Episode:</b>', episode))) +
+      geom_point(size = 2) +
+      labs(x = "Damage Dealt (Scaled)",
+           y = "Healing Given (Scaled)") +
+      theme_bw() +
+      scale_colour_manual(values = cluster_palette) +
+      theme(legend.position = "none",
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank(),
+            plot.background = element_blank(),
+            legend.background = element_blank(),
+            axis.title = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+    
+    ggplotly(cluster_plot, tooltip = c("text")) %>%
+      layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
+             paper_bgcolor = "rgba(0, 0, 0, 0)",
+             fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+      config(displayModeBar = F)
+    
+  })
+  
   # Multinomial model
   
   output$multinom_plot <- renderPlot({

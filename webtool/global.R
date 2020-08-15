@@ -78,3 +78,4 @@ options(scipen = 999)
 # Useful lists for inputs
 
 lev_choices <- c("All", "Levels under 6", "Levels over 6")
+cluster_choices <- c("Yes", "No")
