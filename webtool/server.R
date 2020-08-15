@@ -68,15 +68,12 @@ shinyServer <- function(input, output, session) {
   
   # Heatmap
   
-  output$tile_plot <- renderPlotly({
+  output$tile_plot <- renderPlot({
     
     heat_data <- heatmap_prep(rolls_data)
     
     p <- heat_data %>%
-      ggplot(aes(x = total_value, y = character, fill = props,
-                 text = paste('<b>Character:</b>', character,
-                              '<br><b>Roll:</b>', total_value,
-                              '<br><b>Percentage:</b>', paste0(props,"%")))) +
+      ggplot(aes(x = total_value, y = character, fill = props)) +
       geom_tile(aes(width = 0.9, height = 0.9), stat = "identity") +
       geom_text(aes(x = total_value, y = character,
                     label = paste0(props,"%")), colour = "white") +
@@ -89,19 +86,15 @@ shinyServer <- function(input, output, session) {
       theme(legend.position = "none",
             panel.grid = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
+            panel.background = element_rect(fill = alpha("white", 0.2)),
+            plot.background = element_rect(fill = alpha("white", 0.2)),
+            legend.background = element_rect(fill = alpha("white", 0.2)),
             axis.title = element_text(face = "bold"),
             axis.text = element_text(face = "bold"))
+    print(p)
     
-    ggplotly(p, tooltip = c("text")) %>%
-      layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
-             paper_bgcolor = "rgba(0, 0, 0, 0)",
-             fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
-      config(displayModeBar = F)
-    
-  })
+  },
+  bg = "transparent")
   
   # Density plot
   
@@ -158,7 +151,6 @@ shinyServer <- function(input, output, session) {
         character == "Mollymauk"  ~ "Molly",
         character == "Beauregard" ~ "Beau",
         TRUE                      ~ character)) %>%
-      #filter(damage != 0 & healing != 0) %>%
       drop_na() %>%
       filter(character == input$dist_char_selector) %>%
       group_by(episode, character) %>%
@@ -174,9 +166,9 @@ shinyServer <- function(input, output, session) {
       theme_bw() +
       theme(panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
+            panel.background = element_rect(fill = alpha("white", 0.2)),
+            plot.background = element_rect(fill = alpha("white", 0.2)),
+            legend.background = element_rect(fill = alpha("white", 0.2)),
             axis.title = element_text(face = "bold"),
             axis.text = element_text(face = "bold"))
     print(dam_heal_plot)
@@ -255,27 +247,11 @@ shinyServer <- function(input, output, session) {
             axis.text = element_text(face = "bold"))
     
     ggplotly(cluster_plot, tooltip = c("text")) %>%
-      layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
-             paper_bgcolor = "rgba(0, 0, 0, 0)",
-             fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
       config(displayModeBar = F)
     
   })
-  
-  # Multinomial model
-  
-  output$multinom_plot <- renderPlot({
-    
-    mod_dat <- multinom_prep(rolls_data)
-    
-    theme_set(theme_sjplot())
-    
-    the_mod <- plot_model(mod_dat, sort.est = TRUE, transform = "plogis", show.values = TRUE, value.offset = .3,
-                          title = "", colors = c("#FD62AD"))
-    print(the_mod)
-    
-  },
-  bg = "transparent")
   
   #------------------------STATE SPACE TAB---------------------------------
   
