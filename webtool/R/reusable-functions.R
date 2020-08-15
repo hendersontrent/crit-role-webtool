@@ -165,6 +165,36 @@ multinom_prep <- function(data){
   
 }
 
+# Density plot
+
+density_plotter <- function(data){
+  
+  the_dens <- ggplot(data = data, aes(x = total_value, text = paste('<b>Character:</b>', character,
+                                                                    '<br><b>Roll:</b>', total_value))) +
+    geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
+    labs(x = "Roll Value",
+         y = "Density",
+         fill = "Roll value") +
+    theme_bw() +
+    scale_x_continuous(limits = c(0,50),
+                       breaks = c(0,10,20,30,40,50)) +
+    theme(legend.position = "bottom",
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank(),
+          plot.background = element_blank(),
+          legend.background = element_blank(),
+          axis.title = element_text(face = "bold"),
+          axis.text = element_text(face = "bold"))
+  
+  ggplotly(the_dens, tooltip = c("text")) %>%
+    layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
+           paper_bgcolor = "rgba(0, 0, 0, 0)",
+           fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+    config(displayModeBar = F)
+  
+}
+
 #----------------- DAMAGE AND HEALING ---------------------
 
 cleaner <- function(data){

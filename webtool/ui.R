@@ -93,27 +93,43 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                          ),
                                    mainPanel(
                                     fluidRow(column(9,
-                                     h3("Distribution of Total Roll Values (excl. Nat1 and Nat20)"),
+                                     h3("Distribution of total roll values (excl. Nat1 and Nat20)"),
                                      plotlyOutput("ridge_dens", height = "450px")
                                                 )
                                               ),
-                                    fluidRow(
-                                     h3("Episode Time-Series Distribution of Nat20 Rolls"),
-                                     plotOutput("ts_dens", height = "450px")
+                                    fluidRow(column(9,
+                                     h3("Damage dealt and healing given"),
+                                     plotOutput("lm_plot", height = "450px"),
+                                     br(),
+                                     p("Shaded region uses a Generalised Additive Model and indicates 80% confidence interval for the smoothing estimates.")
                                                )
+                                              )
                                              )
-                                           )
-                                         ),
-                              tabPanel("Multinomial Roll Model",
+                                            )
+                                           ),
+                              tabPanel("Cluster and Logit Analysis",
                                        sidebarLayout(
                                          sidebarPanel(
                                            h2("Page Details"),
-                                           p("This page produces a range of data visualisations for dice roll data by character.")
+                                           p("This page produces a range of data visualisations for some character-based statistical analysis."),
+                                           sliderInput("num_clus", "How many clusters do you want the analysis to output?",
+                                                       min = 1, max = 6, value = 3),
+                                           radioButtons("cluster_zero_selector", "Do you want episodes where zeros were recorded to be included?", choices = cluster_choices,
+                                                        selected = cluster_choices[1], inline = TRUE)
                                          ),
                                    mainPanel(
                                      fluidRow(column(9,
+                                      h3("Cluster analysis"),
+                                      plotlyOutput("cluster_plot", height = "450px"),
+                                      br(),
+                                      p("k-means cluster algorithm was used.")
+                                      )
+                                     ),
+                                     fluidRow(column(9,
                                       h3("Probability of rolling a Nat1 or Nat20 relative to intercept (made up of other rolls & Beauregard)"),
-                                      plotOutput("multinom_plot", height = "450px")
+                                      plotOutput("multinom_plot", height = "450px"),
+                                      br(),
+                                      p("Model used is a multinomial logistic regression.")
                                              )
                                             )
                                            )
