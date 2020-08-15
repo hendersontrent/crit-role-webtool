@@ -17,6 +17,7 @@ library(shinycssloaders)
 library(nnet)
 library(sjPlot)
 library(caTools)
+library(mgcv)
 
 # Load HTML files
 

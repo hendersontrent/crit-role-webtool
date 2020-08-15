@@ -122,120 +122,64 @@ shinyServer <- function(input, output, session) {
     
     if(input$dist_ep_selector == "All"){
     
-    the_dens <- the_dens_data %>%
-      ggplot(aes(x = total_value, text = paste('<b>Character:</b>', character,
-                                               '<br><b>Roll:</b>', total_value))) +
-      geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
-      labs(x = "Roll Value",
-           y = "Density",
-           fill = "Roll value") +
-      theme_bw() +
-      scale_x_continuous(limits = c(0,50),
-                         breaks = c(0,10,20,30,40,50)) +
-      theme(legend.position = "bottom",
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold"))
-    
-    ggplotly(the_dens, tooltip = c("text")) %>%
-      layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
-             paper_bgcolor = "rgba(0, 0, 0, 0)",
-             fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
-      config(displayModeBar = F)
+    the_dens <- density_plotter(the_dens_data)
     
     } else if(input$dist_ep_selector == "Levels under 6"){
       
-      the_dens <- the_dens_data %>%
-        filter(episode < 30) %>%
-        ggplot(aes(x = total_value, text = paste('<b>Character:</b>', character,
-                                                 '<br><b>Roll:</b>', total_value))) +
-        geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
-        labs(x = "Roll Value",
-             y = "Density",
-             fill = "Roll value") +
-        theme_bw() +
-        scale_x_continuous(limits = c(0,50),
-                           breaks = c(0,10,20,30,40,50)) +
-        theme(legend.position = "bottom",
-              panel.grid.minor = element_blank(),
-              panel.border = element_blank(),
-              panel.background = element_blank(),
-              plot.background = element_blank(),
-              legend.background = element_blank(),
-              axis.title = element_text(face = "bold"),
-              axis.text = element_text(face = "bold"))
+      the_dens_init <- the_dens_data %>%
+        filter(episode < 30)
       
-      ggplotly(the_dens, tooltip = c("text")) %>%
-        layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
-               paper_bgcolor = "rgba(0, 0, 0, 0)",
-               fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
-        config(displayModeBar = F)
+      the_dens <- density_plotter(the_dens_init)
+      
+      return(the_dens)
       
     } else{
       
-      the_dens <- the_dens_data %>%
-        filter(episode >= 30) %>%
-        ggplot(aes(x = total_value, text = paste('<b>Character:</b>', character,
-                                                 '<br><b>Roll:</b>', total_value))) +
-        geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
-        labs(x = "Roll Value",
-             y = "Density",
-             fill = "Roll value") +
-        theme_bw() +
-        scale_x_continuous(limits = c(0,50),
-                           breaks = c(0,10,20,30,40,50)) +
-        theme(legend.position = "bottom",
-              panel.grid.minor = element_blank(),
-              panel.border = element_blank(),
-              panel.background = element_blank(),
-              plot.background = element_blank(),
-              legend.background = element_blank(),
-              axis.title = element_text(face = "bold"),
-              axis.text = element_text(face = "bold"))
+      the_dens_init <- the_dens_data %>%
+        filter(episode >= 30)
       
-      ggplotly(the_dens, tooltip = c("text")) %>%
-        layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
-               paper_bgcolor = "rgba(0, 0, 0, 0)",
-               fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
-        config(displayModeBar = F)
+      the_dens <- density_plotter(the_dens_init)
+      
+      return(the_dens)
       
     }
     
   })
   
-  # Time series density
+  # GAM plot
   
-  output$ts_dens <- renderPlot({
+  output$lm_plot <- renderPlot({
     
-    nat_20s <- rolls_data %>%
-      filter(total_value == 120) %>%
-      filter(character %in% the_nein) %>%
+    healing_max <- max(dam_heals$healing) # For locking cartesian coordinates in the plot
+    
+    dam_heal_plot <- dam_heals %>%
       mutate(character = case_when(
-        character == "Nott" ~ "Veth/Nott",
-        character == "Veth" ~ "Veth/Nott",
-        TRUE                ~ character))
-    
-    ts_dens <- nat_20s %>%
-      ggplot(aes(episode, after_stat(count), fill = character)) +
-      geom_density(position = "fill") +
-      labs(x = "Episode",
-           y = "Roll Count Density",
-           fill = NULL) +
+        character == "Nott_veth"  ~ "Veth/Nott",
+        character == "Mollymauk"  ~ "Molly",
+        character == "Beauregard" ~ "Beau",
+        TRUE                      ~ character)) %>%
+      #filter(damage != 0 & healing != 0) %>%
+      drop_na() %>%
+      filter(character == input$dist_char_selector) %>%
+      group_by(episode, character) %>%
+      summarise(damage = sum(damage),
+                healing = sum(healing)) %>%
+      ungroup() %>%
+      ggplot(aes(x = damage, y = healing)) +
+      geom_smooth(formula = y ~ s(x), method = "gam", fill = "#FEB06A", colour = "#FEB06A") +
+      geom_point(size = 4, colour = "#05445E") +
+      labs(x = "Damage Dealt",
+           y = "Healing Given") +
+      coord_cartesian(ylim = c(0, healing_max))  + # Constrains geom_smooth to 0-max range
       theme_bw() +
-      scale_fill_manual(values = the_palette) +
-      theme(legend.position = "bottom",
-            panel.grid.minor = element_blank(),
+      theme(panel.grid.minor = element_blank(),
             panel.border = element_blank(),
             panel.background = element_blank(),
             plot.background = element_blank(),
             legend.background = element_blank(),
             axis.title = element_text(face = "bold"),
             axis.text = element_text(face = "bold"))
-    print(ts_dens)
+    print(dam_heal_plot)
     
   },
   bg = "transparent")

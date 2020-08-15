@@ -27,3 +27,8 @@ All data is sourced from [Crit Role Stats](https://www.critrolestats.com/).
 ### Where did the artwork come from?
 
 Official Mighty Nein artwork created by [@ornerine](https://twitter.com/ornerine) and sourced from [Critical Role website](https://critrole.com/hype-new-official-mighty-nein-character-art-by-ariana-orner/).
+
+
+### How can I log an issue or contribute?
+
+If you have a GitHub account, you can log an issue or contribute to application development at the [repository](https://github.com/hendersontrent/crit-role-webtool).

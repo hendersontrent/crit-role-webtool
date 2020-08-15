@@ -93,17 +93,20 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                          ),
                                    mainPanel(
                                     fluidRow(column(9,
-                                     h3("Distribution of Total Roll Values (excl. Nat1 and Nat20)"),
+                                     h3("Distribution of total roll values (excl. Nat1 and Nat20)"),
                                      plotlyOutput("ridge_dens", height = "450px")
                                                 )
                                               ),
-                                    fluidRow(
-                                     h3("Episode Time-Series Distribution of Nat20 Rolls"),
-                                     plotOutput("ts_dens", height = "450px")
+                                    fluidRow(column(9,
+                                     h3("Damage dealt and healing given"),
+                                     plotOutput("lm_plot", height = "450px"),
+                                     br(),
+                                     p("Shaded region uses a Generalised Additive Model and indicates 80% confidence interval for the smoothing estimates.")
                                                )
+                                              )
                                              )
-                                           )
-                                         ),
+                                            )
+                                           ),
                               tabPanel("Multinomial Roll Model",
                                        sidebarLayout(
                                          sidebarPanel(
