@@ -1,7 +1,7 @@
 # Define UI for web application
 
 shinyUI(navbarPage(theme = "corp-styles.css", 
-                   title = div(img(src = "orbisant_logo.png", height = '30px', hspace ='30'),
+                   title = div(img(src = "orbisant_logo.png", height = '50px', hspace = '30'),
                                ""),
                    position = c("static-top"), windowTitle = "Critical Role: A Statistical Exploration",
                    id = "page_tab",
@@ -75,7 +75,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                   mainPanel(
                                    fluidRow(column(9,
                                     h3("The Mighty Nein total roll value breakdown by character"),
-                                    plotlyOutput("tile_plot", height = "450px")
+                                    plotOutput("tile_plot", height = "450px")
                                       )
                                      )
                                     )
@@ -107,7 +107,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                              )
                                             )
                                            ),
-                              tabPanel("Cluster and Logit Analysis",
+                              tabPanel("Cluster Analysis",
                                        sidebarLayout(
                                          sidebarPanel(
                                            h2("Page Details"),
@@ -123,20 +123,13 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                       plotlyOutput("cluster_plot", height = "450px"),
                                       br(),
                                       p("k-means cluster algorithm was used.")
-                                      )
-                                     ),
-                                     fluidRow(column(9,
-                                      h3("Probability of rolling a Nat1 or Nat20 relative to intercept (made up of other rolls & Beauregard)"),
-                                      plotOutput("multinom_plot", height = "450px"),
-                                      br(),
-                                      p("Model used is a multinomial logistic regression.")
                                              )
                                             )
                                            )
                                           )
                                          )
                                         )
-                            ),
+                                       ),
                    
                    #----------------------State space modelling header------------------------
                    tabPanel(navtab2,

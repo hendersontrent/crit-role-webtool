@@ -107,7 +107,6 @@ heatmap_prep <- function(data){
       character == "Veth" ~ "Veth/Nott",
       TRUE                ~ character)) %>%
     mutate(total_value = case_when(
-      total_value > 100 & total_value != 101 & total_value != 120 ~ "Other Nats",  
       total_value == 101                                          ~ "Nat1",
       total_value == 120                                          ~ "Nat20",
       total_value < 5                                             ~ "<5",
@@ -119,7 +118,9 @@ heatmap_prep <- function(data){
       total_value >= 30 & total_value < 35                        ~ "30-35",
       total_value >= 35 & total_value < 40                        ~ "35-40",
       total_value >= 40 & total_value < 45                        ~ "40-45",
-      total_value >= 45 & total_value < 50                        ~ "45-50")) %>%
+      total_value >= 45 & total_value < 50                        ~ "45-50",
+      TRUE                                                        ~ "Delete")) %>%
+    filter(total_value != "Delete") %>%
     mutate(total_value = factor(total_value, levels = c("Nat1", "Nat20", "Other Nats",
                                                         "<5", "5-10", "10-15", "15-20",
                                                         "20-25", "25-30", "30-35", "35-40",
@@ -132,36 +133,6 @@ heatmap_prep <- function(data){
     ungroup()
   
   return(heat_data)
-  
-}
-
-# Multinomial logistic modeller
-
-multinom_prep <- function(data){
-  
-  model_data <- data %>%
-    filter(character %in% the_nein) %>%
-    mutate(character = case_when(
-      character == "Nott" ~ "Veth/Nott",
-      character == "Veth" ~ "Veth/Nott",
-      TRUE                ~ character)) %>%
-    mutate(total_value = case_when(
-      total_value == 101                                          ~ "Nat1",
-      total_value == 120                                          ~ "Nat20",
-      TRUE                                                        ~ "Other Totals")) %>%
-    mutate(total_value = factor(total_value, levels = c("Other Totals", "Nat1", "Nat20")))
-  
-  # Split data into test and train sets
-  
-  sample_size <- floor(0.8 * nrow(model_data))
-  set.seed(123)
-  train_ind <- sample(seq_len(nrow(model_data)), size = sample_size)
-  train <- model_data[train_ind,]
-  test <- model_data[-train_ind,]
-  
-  model <- nnet::multinom(total_value ~ character, data = train)
-  
-  return(model)
   
 }
 
@@ -188,9 +159,8 @@ density_plotter <- function(data){
           axis.text = element_text(face = "bold"))
   
   ggplotly(the_dens, tooltip = c("text")) %>%
-    layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
-           paper_bgcolor = "rgba(0, 0, 0, 0)",
-           fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+    layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+           paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
     config(displayModeBar = F)
   
 }
