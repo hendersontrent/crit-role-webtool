@@ -75,7 +75,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                   mainPanel(
                                    fluidRow(column(9,
                                     h3("The Mighty Nein total roll value breakdown by character"),
-                                    plotOutput("tile_plot", height = "450px")
+                                    plotlyOutput("tile_plot", height = "450px")
                                       )
                                      )
                                     )
@@ -85,16 +85,20 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                 sidebarLayout(
                                    sidebarPanel(
                                      h2("Page Details"),
-                                     p("This page produces a range of data visualisations for dice roll data by character.")
+                                     p("This page produces a range of data visualisations for dice roll data by character."),
+                                     selectInput("dist_char_selector", "Select a character", choices = the_nein,
+                                                 selected = the_nein[1], multiple = FALSE),
+                                     radioButtons("dist_ep_selector", "What type of episodes are you interested in?", choices = lev_choices,
+                                                 selected = lev_choices[1], inline = TRUE)
                                          ),
                                    mainPanel(
                                     fluidRow(column(9,
-                                     h3("Distribution of Total Roll Values"),
-                                     plotOutput("ridge_dens", height = "450px")
+                                     h3("Distribution of Total Roll Values (excl. Nat1 and Nat20)"),
+                                     plotlyOutput("ridge_dens", height = "450px")
                                                 )
                                               ),
                                     fluidRow(
-                                     h3("Episode Time-Series Distribution of Rolls"),
+                                     h3("Episode Time-Series Distribution of Nat20 Rolls"),
                                      plotOutput("ts_dens", height = "450px")
                                                )
                                              )
