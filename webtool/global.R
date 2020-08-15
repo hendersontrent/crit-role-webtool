@@ -16,6 +16,7 @@ library(plotly)
 library(shinycssloaders)
 library(nnet)
 library(sjPlot)
+library(caTools)
 
 # Load HTML files
 
@@ -72,3 +73,7 @@ rolls_raw <- read_excel_allsheets("data/All Rolls - Wildemount.xlsx")
 # Turn off scientific notation
 
 options(scipen = 999)
+
+# Useful lists for inputs
+
+lev_choices <- c("All", "Levels under 6", "Levels over 6")

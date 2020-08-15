@@ -68,12 +68,15 @@ shinyServer <- function(input, output, session) {
   
   # Heatmap
   
-  output$tile_plot <- renderPlot({
+  output$tile_plot <- renderPlotly({
     
     heat_data <- heatmap_prep(rolls_data)
     
     p <- heat_data %>%
-      ggplot(aes(x = total_value, y = character, fill = props)) +
+      ggplot(aes(x = total_value, y = character, fill = props,
+                 text = paste('<b>Character:</b>', character,
+                              '<br><b>Roll:</b>', total_value,
+                              '<br><b>Percentage:</b>', paste0(props,"%")))) +
       geom_tile(aes(width = 0.9, height = 0.9), stat = "identity") +
       geom_text(aes(x = total_value, y = character,
                     label = paste0(props,"%")), colour = "white") +
@@ -83,7 +86,7 @@ shinyServer <- function(input, output, session) {
       scale_fill_gradient(low = "#05445E", high = "#FD62AD",
                           label = function(x) paste0(x,"%")) +
       theme_bw() +
-      theme(legend.position = "bottom",
+      theme(legend.position = "none",
             panel.grid = element_blank(),
             panel.border = element_blank(),
             panel.background = element_blank(),
@@ -91,31 +94,44 @@ shinyServer <- function(input, output, session) {
             legend.background = element_blank(),
             axis.title = element_text(face = "bold"),
             axis.text = element_text(face = "bold"))
-    print(p)
     
-  },
-  bg = "transparent")
-  
-  # Ridgeplot
-  
-  output$ridge_dens <- renderPlot({
+    ggplotly(p, tooltip = c("text")) %>%
+      layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
+             paper_bgcolor = "rgba(0, 0, 0, 0)",
+             fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+      config(displayModeBar = F)
     
-    the_dens <- rolls_data %>%
+  })
+  
+  # Density plot
+  
+  output$ridge_dens <- renderPlotly({
+    
+    # Values for inputs
+    
+    max_eps <- max(rolls_data$episode)
+    
+    the_dens_data <- rolls_data %>%
       filter(character %in% the_nein) %>%
       mutate(character = case_when(
         character == "Nott" ~ "Veth/Nott",
         character == "Veth" ~ "Veth/Nott",
         TRUE                ~ character)) %>%
-      filter(total_value < 100) %>%
-      ggplot(aes(x = total_value, y = character, fill = ..x..)) +
-      geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
-      labs(x = "Total Roll Value",
-           y = NULL,
+      filter(character == input$dist_char_selector) %>%
+      filter(total_value < 100)
+    
+    if(input$dist_ep_selector == "All"){
+    
+    the_dens <- the_dens_data %>%
+      ggplot(aes(x = total_value, text = paste('<b>Character:</b>', character,
+                                               '<br><b>Roll:</b>', total_value))) +
+      geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
+      labs(x = "Roll Value",
+           y = "Density",
            fill = "Roll value") +
       theme_bw() +
       scale_x_continuous(limits = c(0,50),
                          breaks = c(0,10,20,30,40,50)) +
-      scale_fill_gradient(low = "#A0E7E5", high = "#FD62AD") +
       theme(legend.position = "bottom",
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
@@ -124,10 +140,72 @@ shinyServer <- function(input, output, session) {
             legend.background = element_blank(),
             axis.title = element_text(face = "bold"),
             axis.text = element_text(face = "bold"))
-    print(the_dens)
     
-  },
-  bg = "transparent")
+    ggplotly(the_dens, tooltip = c("text")) %>%
+      layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
+             paper_bgcolor = "rgba(0, 0, 0, 0)",
+             fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+      config(displayModeBar = F)
+    
+    } else if(input$dist_ep_selector == "Levels under 6"){
+      
+      the_dens <- the_dens_data %>%
+        filter(episode < 30) %>%
+        ggplot(aes(x = total_value, text = paste('<b>Character:</b>', character,
+                                                 '<br><b>Roll:</b>', total_value))) +
+        geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
+        labs(x = "Roll Value",
+             y = "Density",
+             fill = "Roll value") +
+        theme_bw() +
+        scale_x_continuous(limits = c(0,50),
+                           breaks = c(0,10,20,30,40,50)) +
+        theme(legend.position = "bottom",
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.background = element_blank(),
+              legend.background = element_blank(),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      
+      ggplotly(the_dens, tooltip = c("text")) %>%
+        layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
+               paper_bgcolor = "rgba(0, 0, 0, 0)",
+               fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+        config(displayModeBar = F)
+      
+    } else{
+      
+      the_dens <- the_dens_data %>%
+        filter(episode >= 30) %>%
+        ggplot(aes(x = total_value, text = paste('<b>Character:</b>', character,
+                                                 '<br><b>Roll:</b>', total_value))) +
+        geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
+        labs(x = "Roll Value",
+             y = "Density",
+             fill = "Roll value") +
+        theme_bw() +
+        scale_x_continuous(limits = c(0,50),
+                           breaks = c(0,10,20,30,40,50)) +
+        theme(legend.position = "bottom",
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.background = element_blank(),
+              legend.background = element_blank(),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      
+      ggplotly(the_dens, tooltip = c("text")) %>%
+        layout(plot_bgcolor  = "rgba(0, 0, 0, 0)",
+               paper_bgcolor = "rgba(0, 0, 0, 0)",
+               fig_bgcolor   = "rgba(0, 0, 0, 0)") %>%
+        config(displayModeBar = F)
+      
+    }
+    
+  })
   
   # Time series density
   
