@@ -1,0 +1,12 @@
+name: crit-role-statistical-tool
+title: crit-role-statistical-tool
+username:
+account: orbisantanalytics
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2672472
+bundleId: 3518521
+url: https://orbisantanalytics.shinyapps.io/crit-role-statistical-tool/
+when: 1597467804.70527
+asMultiple: FALSE
+asStatic: FALSE
