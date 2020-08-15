@@ -35,22 +35,22 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                             fluidRow(
                               column(1),
                               column(1),
-                              column(2, style = "border-style: dotted; border-color: #A0E7E5; min-height: 400px;", 
-                                     fluidRow(HTML(welcome_box_1), style = "min-height: 300px; margin-left: 20px; margin-right: 20px;"),
+                              column(2, style = "border-style: dotted; border-color: #A0E7E5; min-height: 300px; max-height: 500px", 
+                                     fluidRow(HTML(welcome_box_1), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
                                      fluidRow(align = "center", actionButton("button_one", "VIEW ANALYSIS", 
                                                                              style = "color: #A0E7E5; background-color: #ffffff; border-color: #A0E7E5"))
                               ),
                               column(1),
                               
-                              column(2, style = "border-style: dotted; border-color: #FD62AD; min-height: 400px;",
-                                     fluidRow(HTML(welcome_box_2), style = "min-height: 300px; margin-left: 20px; margin-right: 20px;"),
+                              column(2, style = "border-style: dotted; border-color: #FD62AD; min-height: 300px; max-height: 500px",
+                                     fluidRow(HTML(welcome_box_2), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
                                      fluidRow(align = "center", actionButton("button_two", "VIEW MODELLING", 
                                                                              style = "color: #FD62AD; background-color: #ffffff; border-color: #FD62AD"))
                               ),
                               column(1),
                               
-                              column(2, style = "border-style: dotted; border-color: #05445E; min-height: 400px;",
-                                     fluidRow(HTML(welcome_box_3), style = "min-height: 300px; margin-left: 20px; margin-right: 20px;"),
+                              column(2, style = "border-style: dotted; border-color: #05445E; min-height: 300px; max-height: 500px",
+                                     fluidRow(HTML(welcome_box_3), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
                                      fluidRow(align = "center", actionButton("button_three", "VIEW ABOUT SECTION", 
                                                                              style = "color: #05445E; background-color: #ffffff; border-color: #05445E"))
                               ),
