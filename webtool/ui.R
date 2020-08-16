@@ -35,10 +35,10 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                             fluidRow(
                               column(1),
                               column(1),
-                              column(2, style = "border-style: dotted; border-color: #A0E7E5; min-height: 300px; max-height: 500px", 
+                              column(2, style = "border-style: dotted; border-color: #FEB06A; min-height: 300px; max-height: 500px", 
                                      fluidRow(HTML(welcome_box_1), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
                                      fluidRow(align = "center", actionButton("button_one", "VIEW ANALYSIS", 
-                                                                             style = "color: #A0E7E5; background-color: #ffffff; border-color: #A0E7E5"))
+                                                                             style = "color: #FEB06A; background-color: #ffffff; border-color: #FEB06A"))
                               ),
                               column(1),
                               
@@ -70,9 +70,16 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                 sidebarLayout(
                                   sidebarPanel(
                                     h2("Page Details"),
-                                    p("This page produces a range of data visualisations for dice roll data by character.")
+                                    p("This page produces a range of data visualisations for dice roll data by character."),
+                                    selectInput("bar_input", "Select a roll value", choices = the_roll_values,
+                                                selected = the_roll_values[1], multiple = FALSE)
                                   ),
                                   mainPanel(
+                                    fluidRow(column(9,
+                                     h3("The Mighty Nein counts of rolls by character"),
+                                     shinycssloaders::withSpinner(plotOutput("bar_plot", height = "450px"))
+                                      )
+                                    ),
                                    fluidRow(column(9,
                                     h3("The Mighty Nein total roll value breakdown by character"),
                                     plotOutput("tile_plot", height = "450px")
@@ -89,19 +96,21 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                      selectInput("dist_char_selector", "Select a character", choices = the_nein,
                                                  selected = the_nein[1], multiple = FALSE),
                                      radioButtons("dist_ep_selector", "What type of episodes are you interested in?", choices = lev_choices,
-                                                 selected = lev_choices[1], inline = TRUE)
+                                                 selected = lev_choices[1], inline = TRUE),
+                                     radioButtons("gam_zero_selector", "For bottom graph: Do you want episodes where zeros were recorded to be included?", choices = cluster_choices,
+                                                  selected = cluster_choices[1], inline = TRUE)
                                          ),
                                    mainPanel(
                                     fluidRow(column(9,
                                      h3("Distribution of total roll values (excl. Nat1 and Nat20)"),
-                                     plotlyOutput("ridge_dens", height = "450px")
+                                     shinycssloaders::withSpinner(plotlyOutput("ridge_dens", height = "450px"))
                                                 )
                                               ),
                                     fluidRow(column(9,
                                      h3("Damage dealt and healing given"),
-                                     plotOutput("lm_plot", height = "450px"),
+                                     shinycssloaders::withSpinner(plotOutput("lm_plot", height = "450px")),
                                      br(),
-                                     p("Shaded region uses a Generalised Additive Model and indicates 80% confidence interval for the smoothing estimates.")
+                                     p("Shaded region uses a Generalised Additive Model if zeros are allowed and a Linear Model if not. Ribbon indicates 80% confidence interval for the model smoothing estimates.")
                                                )
                                               )
                                              )

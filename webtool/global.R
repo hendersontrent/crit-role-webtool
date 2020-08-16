@@ -44,8 +44,8 @@ navtab3 <- "ABOUT"
 
 # List of characters
 
-the_nein <- c("Beau", "Caduceus", "Caleb", "Fjord", "Jester", "Veth", "Yasha", 
-              "Molly", "Nott")
+the_nein <- c("Beau", "Caduceus", "Caleb", "Fjord", "Jester", "Veth/Nott", "Yasha", 
+              "Molly")
 
 # Define a vector of nice colours for each character to use in plotting
 
@@ -79,3 +79,5 @@ options(scipen = 999)
 
 lev_choices <- c("All", "Levels under 6", "Levels over 6")
 cluster_choices <- c("Yes", "No")
+bar_rolls_data <- barplot_prep(rolls_raw)
+the_roll_values <- unique(bar_rolls_data$total_value)
