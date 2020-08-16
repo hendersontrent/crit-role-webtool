@@ -32,3 +32,7 @@ Official Mighty Nein artwork created by [@ornerine](https://twitter.com/ornerine
 ### How can I log an issue or contribute?
 
 If you have a GitHub account, you can log an issue or contribute to application development at the [repository](https://github.com/hendersontrent/crit-role-webtool).
+
+### What are the future plans for the application?
+
+Currently, only data for The Mighty Nein is used in the app. It is intended that Vox Machina data will be added. Other creative data visualisations and statistical analyses for both campaigns are also likely to be added.

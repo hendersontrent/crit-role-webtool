@@ -53,6 +53,11 @@ rolls_prep <- function(data){
   
   clean <- df_merged %>%
     drop_na() %>%
+    mutate(character = case_when(
+      character == "Nott" ~ "Veth/Nott",
+      character == "Veth" ~ "Veth/Nott",
+      TRUE                ~ character)) %>%
+    filter(character %in% the_nein) %>%
     mutate(total_value = case_when(
       total_value == "Nat20" ~ "120",
       total_value == "Nat19" ~ "119",
@@ -96,16 +101,79 @@ rolls_prep <- function(data){
   
 }
 
+# Barplot prepper
+
+barplot_prep <- function(data){
+  
+  # Remove unnecessary first worksheet
+  
+  d1 <- data
+  
+  d1 = d1[-1]
+  
+  # Retain only columns I need as worksheets are uneven
+  
+  keep <- c("Episode", "Character", "Type of Roll", "Total Value", "Natural Value")
+  
+  d2 <- lapply(d1, function(x) subset(x, select = intersect(keep, colnames(x))))
+  
+  varnames <- names(d2[[1]]) # variable names
+  vattr <- purrr::map_chr(varnames, ~class(d2[[1]][[.x]])) # variable attributes
+  
+  for (i in seq_along(d2)) {
+    # assign the same attributes of list 1 to the rest of the lists
+    for (j in seq_along(varnames)) {
+      if (varnames[[j]]  %in% names(d2[[i]])) {
+        class(d2[[i]][[varnames[[j]]]]) <- vattr[[j]]
+      } 
+    }
+  }
+  
+  df_merged <- rbindlist(d2, fill = TRUE, use.names = TRUE) %>%
+    clean_names()
+  
+  bar_data <- df_merged %>%
+    drop_na() %>%
+    mutate(character = case_when(
+      character == "Nott" ~ "Veth/Nott",
+      character == "Veth" ~ "Veth/Nott",
+      TRUE                ~ character)) %>%
+    filter(character %in% the_nein) %>%
+    mutate(total_value = gsub("\\..*", "\\1", total_value)) %>%
+    mutate(total_value = case_when(
+           agrepl("Nat", total_value) & total_value != "Nat20" & total_value != "Nat1" ~ gsub("Nat", "\\1", total_value),
+           TRUE                                                                        ~ total_value)) %>%
+    filter(total_value != "Unknown") %>%
+    mutate(episode = gsub("C2E", "", episode)) %>%
+    mutate(episode = case_when(
+      episode == "1519084800" ~ "020",
+      episode == "1519171200" ~ "021",
+      episode == "1519257600" ~ "022",
+      episode == "1519344000" ~ "023",
+      episode == "1519430400" ~ "024",
+      episode == "1519516800" ~ "025",
+      episode == "1519603200" ~ "026",
+      episode == "1519689600" ~ "027",
+      episode == "1519776000" ~ "028",
+      TRUE                    ~ episode)) %>%
+    mutate(episode = as.numeric(episode)) %>%
+    group_by(character, total_value) %>%
+    summarise(counter = n()) %>%
+    ungroup() 
+  
+  return(bar_data)
+}
+
 # Heatmap prepper
 
 heatmap_prep <- function(data){
   
   heat_data <- data %>%
-    filter(character %in% the_nein) %>%
     mutate(character = case_when(
       character == "Nott" ~ "Veth/Nott",
       character == "Veth" ~ "Veth/Nott",
       TRUE                ~ character)) %>%
+    filter(character %in% the_nein) %>%
     mutate(total_value = case_when(
       total_value == 101                                          ~ "Nat1",
       total_value == 120                                          ~ "Nat20",

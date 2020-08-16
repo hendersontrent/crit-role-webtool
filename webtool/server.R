@@ -66,6 +66,31 @@ shinyServer <- function(input, output, session) {
   
   #------------------------ANALYSIS TAB------------------------------------
   
+  # Barplot
+  
+  output$bar_plot <- renderPlot({
+    
+    bar_plot <- bar_rolls_data %>%
+      filter(total_value == input$bar_input) %>%
+      mutate(character = as.factor(character)) %>%
+      ggplot(aes(x = reorder(character, counter), y = counter)) +
+      geom_bar(fill = "#FD62AD", stat = "identity") +
+      xlab("Character") +
+      ylab("Count") +
+      theme_bw() +
+      coord_flip() +
+      theme(panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_rect(fill = alpha("white", 0.2)),
+            plot.background = element_rect(fill = alpha("white", 0.2)),
+            legend.background = element_rect(fill = alpha("white", 0.2)),
+            axis.title = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+    print(bar_plot)
+    
+  },
+  bg = "transparent")
+  
   # Heatmap
   
   output$tile_plot <- renderPlot({
@@ -105,13 +130,12 @@ shinyServer <- function(input, output, session) {
     max_eps <- max(rolls_data$episode)
     
     the_dens_data <- rolls_data %>%
-      filter(character %in% the_nein) %>%
-      mutate(character = case_when(
-        character == "Nott" ~ "Veth/Nott",
-        character == "Veth" ~ "Veth/Nott",
-        TRUE                ~ character)) %>%
       filter(character == input$dist_char_selector) %>%
       filter(total_value < 100)
+    
+    molly_exception <- rolls_data %>%
+      filter(episode >= 30) %>%
+      filter(character == "Molly")
     
     if(input$dist_ep_selector == "All"){
     
@@ -121,6 +145,20 @@ shinyServer <- function(input, output, session) {
       
       the_dens_init <- the_dens_data %>%
         filter(episode < 30)
+      
+      the_dens <- density_plotter(the_dens_init)
+      
+      return(the_dens)
+      
+    } else if(input$dist_ep_selector == "Levels over 6" & input$dist_char_selector == "Molly"){
+      
+      validate(
+        need(try(length(molly_exception) > 0, "No data available.")
+        )
+      )
+      
+      the_dens_init <- the_dens_data %>%
+        filter(episode >= 30)
       
       the_dens <- density_plotter(the_dens_init)
       
@@ -144,6 +182,8 @@ shinyServer <- function(input, output, session) {
   output$lm_plot <- renderPlot({
     
     healing_max <- max(dam_heals$healing) # For locking cartesian coordinates in the plot
+    
+    if(input$gam_zero_selector == "Yes"){
     
     dam_heal_plot <- dam_heals %>%
       mutate(character = case_when(
@@ -172,6 +212,39 @@ shinyServer <- function(input, output, session) {
             axis.title = element_text(face = "bold"),
             axis.text = element_text(face = "bold"))
     print(dam_heal_plot)
+    
+    } else{
+      
+      dam_heal_plot <- dam_heals %>%
+        mutate(character = case_when(
+          character == "Nott_veth"  ~ "Veth/Nott",
+          character == "Mollymauk"  ~ "Molly",
+          character == "Beauregard" ~ "Beau",
+          TRUE                      ~ character)) %>%
+        drop_na() %>%
+        filter(character == input$dist_char_selector) %>%
+        filter(damage != 0 & healing != 0) %>%
+        group_by(episode, character) %>%
+        summarise(damage = sum(damage),
+                  healing = sum(healing)) %>%
+        ungroup() %>%
+        ggplot(aes(x = damage, y = healing)) +
+        geom_smooth(formula = y ~ x, method = "lm", fill = "#FEB06A", colour = "#FEB06A") +
+        geom_point(size = 4, colour = "#05445E") +
+        labs(x = "Damage Dealt",
+             y = "Healing Given") +
+        coord_cartesian(ylim = c(0, healing_max))  + # Constrains geom_smooth to 0-max range
+        theme_bw() +
+        theme(panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_rect(fill = alpha("white", 0.2)),
+              plot.background = element_rect(fill = alpha("white", 0.2)),
+              legend.background = element_rect(fill = alpha("white", 0.2)),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      print(dam_heal_plot)
+      
+    }
     
   },
   bg = "transparent")
