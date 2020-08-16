@@ -208,8 +208,7 @@ heatmap_prep <- function(data){
 
 density_plotter <- function(data){
   
-  the_dens <- ggplot(data = data, aes(x = total_value, text = paste('<b>Character:</b>', character,
-                                                                    '<br><b>Roll:</b>', total_value))) +
+  the_dens <- ggplot(data = data, aes(x = total_value, text = paste('<b>Character:</b>', character))) +
     geom_density(fill = "#FD62AD", alpha = 0.4, colour = "#FD62AD") +
     labs(x = "Roll Value",
          y = "Density",
@@ -226,7 +225,7 @@ density_plotter <- function(data){
           axis.title = element_text(face = "bold"),
           axis.text = element_text(face = "bold"))
   
-  ggplotly(the_dens, tooltip = c("text")) %>%
+  ggplotly(the_dens) %>%
     layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
            paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
     config(displayModeBar = F)

@@ -148,8 +148,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                               sidebarLayout(
                                 sidebarPanel(
                                   h2("Page Details"),
-                                  p("This page produces outputs from a Bayesian state space model that was written to analyse damage dealt and healing given by episode. The analysis may take a few minutes to compute (and the graph to appear) as it is a complex statistical model."),
-                                  actionButton("go_ss", "Run Model")
+                                  p("This page produces outputs from a Bayesian state space model that was written to analyse damage dealt and healing given by episode.")
                                 ),
                                 mainPanel(
                                   fluidRow(column(9,
@@ -159,10 +158,10 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                     p("Points indicate actual data (aggregated sums per episode across all characters). Lines indicate mean posterior estimates. Shaded areas indicate 95% credible intervals.")
                                    )
                                   )
+                                 )
                                 )
-                              )
-                            )
-                          ),
+                               )
+                              ),
                    
                    #----------------------Help page header------------------------------------
                    tabPanel(navtab3,
