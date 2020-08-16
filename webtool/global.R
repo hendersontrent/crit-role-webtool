@@ -35,6 +35,13 @@ for(f in r_files){
   source(f)
 }
 
+# Load state space data
+
+data_files <- list.files("data", full.names= TRUE, pattern = "\\.Rda", all.files = TRUE)
+for(d in data_files){
+  load(d)
+}
+
 # Define tab names
 
 navtab0 <- "HOME"
