@@ -13,7 +13,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                               tags$link(rel = "stylesheet", type = "text/css", href = "corp-styles.css")
                             ),
                             
-                            setBackgroundImage(src = "mn_light.png"),
+                            setBackgroundImage(src = "mn_lightest.png"),
                             
                             fluidRow(style = "padding-top: 0", 
                                      HTML("
@@ -29,37 +29,27 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                               column(2),
                               column(8, style = "min-height: 150px;",
                                      HTML(splash_page_content)
-                              ),
-                              column(2)
-                            ),
-                            fluidRow(
-                              column(1),
-                              column(1),
-                              column(2, style = "border-style: dotted; border-color: #FEB06A; min-height: 300px; max-height: 500px", 
-                                     fluidRow(HTML(welcome_box_1), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
-                                     fluidRow(align = "center", actionButton("button_one", "VIEW ANALYSIS", 
-                                                                             style = "color: #FEB06A; background-color: #ffffff; border-color: #FEB06A"))
-                              ),
-                              column(1),
-                              
-                              column(2, style = "border-style: dotted; border-color: #FD62AD; min-height: 300px; max-height: 500px",
-                                     fluidRow(HTML(welcome_box_2), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
-                                     fluidRow(align = "center", actionButton("button_two", "VIEW MODELLING", 
-                                                                             style = "color: #FD62AD; background-color: #ffffff; border-color: #FD62AD"))
-                              ),
-                              column(1),
-                              
-                              column(2, style = "border-style: dotted; border-color: #05445E; min-height: 300px; max-height: 500px",
-                                     fluidRow(HTML(welcome_box_3), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
-                                     fluidRow(align = "center", actionButton("button_three", "VIEW ABOUT SECTION", 
-                                                                             style = "color: #05445E; background-color: #ffffff; border-color: #05445E"))
-                              ),
-                              column(1),
-                              column(1)
-                              
+                              )
                              )
-                            
                             ),
+                   
+                   #----------------------Spellcasting page header----------------------------
+                   tabPanel(navtab5,
+                            fluidRow(h1("Spellcasting Analysis")
+                            ),
+                            fluidRow(column(11,
+                                            h3("Breakdown by Level and Spell Name"),
+                                            radioButtons("spell_selector", "", choices = the_spell_levels,
+                                                         selected = the_spell_levels[1], inline = TRUE),
+                                            shinycssloaders::withSpinner(highchartOutput("spell_tree", height = "550px"))
+                             )
+                            ),
+                            fluidRow(column(11,
+                                            h3("Total Spellcasting Counts by Spell Level"),
+                                            shinycssloaders::withSpinner(highchartOutput("spell_bar", height = "550px"))
+                            )
+                           )
+                          ),
                    
                    #----------------------Character analysis header---------------------------
                    tabPanel(navtab1,
@@ -139,6 +129,31 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                          )
                                         )
                                        ),
+                   
+                   #----------------------Money page header-----------------------------------
+                   tabPanel(navtab4,
+                     fluidRow(h1("Money Analysis")
+                            ),
+                            fluidRow(
+                              sidebarLayout(
+                                sidebarPanel(
+                                  h2("Page Details"),
+                                  p("This page analyses The Mighty Nein's income and expenses by episode."),
+                                  selectInput("money_episodes", "Select an episode", choices = the_episodes,
+                                              selected = the_episodes[1], multiple = FALSE)
+                              ),
+                              mainPanel(
+                                fluidRow(column(9,
+                                                h3("Finances by Episode"),
+                                                shinycssloaders::withSpinner(plotOutput("waterfall", height = "550px")),
+                                                br(),
+                                                p("All values are adjusted to their gold equivalent.")
+                                )
+                               )
+                              )
+                             )
+                            )
+                           ),
                    
                    #----------------------State space modelling header------------------------
                    tabPanel(navtab2,

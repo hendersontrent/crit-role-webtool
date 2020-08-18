@@ -280,3 +280,91 @@ cleaner <- function(data){
   
   return(data)
 }
+
+#----------------- MONEY ----------------------------------
+
+money_prep <- function(data){
+  
+  data <- money %>%
+    clean_names() %>%
+    dplyr::select(-c(total_gained_in_gold, total_paid_in_gold, net_platinum, net_gold,
+                     net_silver, net_copper, total_net_in_gold)) %>%
+    gather(key = category, value = value, 2:9) %>%
+    mutate(coin = gsub(".*_", "\\1", category)) %>%
+    mutate(type = gsub("_.*", "\\1", category)) %>%
+    mutate(coin = str_to_title(coin),
+           type = str_to_title(type)) %>%
+    drop_na() %>%
+    filter(episode != "TOTALS") %>%
+    mutate(coin = factor(coin, levels = c("Platinum", "Gold", "Silver", "Copper")))
+  
+}
+
+#----------------- SPELLCASTING ---------------------------
+
+spell_prep <- function(data){
+  
+  cantrip <- data %>%
+    clean_names() %>%
+    dplyr::select(c(1:2)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Cantrip")
+  
+  spell_1 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(3:4)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 1")
+  
+  spell_2 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(5:6)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 2")
+  
+  spell_3 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(7:8)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 3")
+  
+  spell_4 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(9:10)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 4")
+  
+  spell_5 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(11:12)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 5")
+  
+  spell_6 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(13:14)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 6")
+  
+  spell_unknown <- data %>%
+    clean_names() %>%
+    dplyr::select(c(15:16)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 1")
+  
+  # Bind all
+  
+  spells <- bind_rows(cantrip, spell_1, spell_2, spell_3, spell_4, spell_5, spell_6, spell_unknown) %>%
+    drop_na()
+  
+  return(spells)
+  
+}

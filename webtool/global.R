@@ -10,14 +10,13 @@ library(readxl)
 library(janitor)
 library(rstan)
 library(png)
-library(ggridges)
 library(googlesheets4)
 library(plotly)
 library(shinycssloaders)
 library(nnet)
-library(sjPlot)
 library(caTools)
 library(mgcv)
+library(highcharter)
 
 # Load HTML files
 
@@ -48,6 +47,8 @@ navtab0 <- "HOME"
 navtab1 <- "CHARACTER ANALYSIS"
 navtab2 <- "STATISTICAL MODELLING"
 navtab3 <- "ABOUT"
+navtab4 <- "MONEY ANALYSIS"
+navtab5 <- "SPELLCASTING ANALYSIS"
 
 # List of characters
 
@@ -74,6 +75,8 @@ ss_palette <- c("#F84791", "#FFA384")
 damage <- read_excel("data/Damage Dealt - Wildemount.xlsx", sheet = 1)
 healing <- read_excel("data/Healing Given - Wildemount.xlsx", sheet = 1)
 rolls_raw <- read_excel_allsheets("data/All Rolls - Wildemount.xlsx")
+money <- read_excel("data/money_clean.xlsx")
+spellcasting <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 3)
 
 #damage <- read_sheet("https://docs.google.com/spreadsheets/d/1SSrrWbtx1i4EJBPXLSfhcbiOrWXHdd0WW7-9oGt2dm4/edit#gid=0")
 #healing <- read_sheet("https://docs.google.com/spreadsheets/d/1wlauv_gP3m8JQyXNbwNYS-WwPtvYFo88mjNLJEEQstQ/edit#gid=0")
@@ -88,3 +91,9 @@ lev_choices <- c("All", "Levels under 6", "Levels over 6")
 cluster_choices <- c("Yes", "No")
 bar_rolls_data <- barplot_prep(rolls_raw)
 the_roll_values <- unique(bar_rolls_data$total_value)
+
+water_data <- money_prep(money)
+the_episodes <- unique(water_data$episode)
+
+spell_data <- spell_prep(spellcasting)
+the_spell_levels <- unique(spell_data$spell_level)

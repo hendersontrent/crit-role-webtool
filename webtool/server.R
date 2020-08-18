@@ -3,34 +3,6 @@
 
 shinyServer <- function(input, output, session) {
   
-  #------------------------Move from landing page to additional tabs--------------  
-  observe({
-    if(input$button_one == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab1)
-    })
-  })
-  
-  observe({
-    if(input$button_two == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab2)
-    })
-  })
-  
-  observe({
-    if(input$button_three == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab3)
-    })
-  })
-  
   #------------------------DATA PREP---------------------------------------
   
   #-------------------
@@ -350,5 +322,82 @@ shinyServer <- function(input, output, session) {
     print(p)
   },
   bg = "transparent")
+  
+  #------------------------MONEY TAB---------------------------------------
+  
+  output$waterfall <- renderPlot({
+    
+    water_data_1 <- water_data %>%
+      filter(episode == input$money_episodes)
+    
+    water <- water_data_1 %>%
+      ggplot(aes(x = coin, y = value, fill = type)) +
+      geom_bar(data = subset(water_data_1, type == "Gained"), stat = "identity") + 
+      geom_bar(data = subset(water_data_1, type == "Paid"), stat = "identity") +
+      theme_bw() +
+      labs(x = "Coin Type",
+           y = "Value (Scaled to value in gold)",
+           fill = NULL) +
+      coord_flip() +
+      scale_fill_manual(values = c("#A0E7E5", "#FD62AD")) +
+      theme(legend.position = "bottom",
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_rect(fill = alpha("white", 0.2)),
+            plot.background = element_rect(fill = alpha("white", 0.2)),
+            legend.background = element_rect(fill = alpha("white", 0.2)),
+            axis.title = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+    print(water)
+    
+    #ggplotly(water, tooltip = c("text")) %>%
+    #  layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+    #         paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+    #  config(displayModeBar = F)
+    
+  },
+  bg = "transparent")
+  
+  #------------------------SPELLCASTING TAB--------------------------------
+  
+  # Barplot
+  
+  output$spell_bar <- renderHighchart({
+    
+    spell_filt_agg <- spell_data %>%
+      group_by(spell_level) %>%
+      summarise(casts = sum(casts)) %>%
+      ungroup()
+    
+    hc <- spell_filt_agg %>%
+      hchart(
+        "treemap", 
+        hcaes(x = spell_level, value = casts, color = casts)
+      ) %>%
+      hc_colorAxis(stops = color_stops(n = 6, colors = c("#05445E", "#189AB4", "#A0E7E5", 
+                                                         "#75E6DA", "#F7C9B6", "#FD62AD")))
+    
+    return(hc)
+    
+  })
+  
+  # Treemap
+  
+  output$spell_tree <- renderHighchart({
+    
+    spell_filt <- spell_data %>%
+      filter(spell_level == input$spell_selector)
+    
+    hc1 <- spell_filt %>%
+      hchart(
+        "treemap", 
+        hcaes(x = spell, value = casts, color = casts)
+      ) %>%
+      hc_colorAxis(stops = color_stops(n = 6, colors = c("#05445E", "#189AB4", "#A0E7E5", 
+                                                         "#75E6DA", "#F7C9B6", "#FD62AD")))
+    
+    return(hc1)
+    
+  })
   
 }
