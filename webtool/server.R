@@ -3,52 +3,6 @@
 
 shinyServer <- function(input, output, session) {
   
-  #------------------------Move from landing page to additional tabs--------------  
-  observe({
-    if(input$button_one == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab1)
-    })
-  })
-  
-  observe({
-    if(input$button_two == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab2)
-    })
-  })
-  
-  observe({
-    if(input$button_three == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab3)
-    })
-  })
-  
-  observe({
-    if(input$button_four == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab4)
-    })
-  })
-  
-  observe({
-    if(input$button_five == 0){
-      return()
-    }
-    isolate({
-      updateTabsetPanel(session, "page_tab", select = navtab5)
-    })
-  })
-  
   #------------------------DATA PREP---------------------------------------
   
   #-------------------
