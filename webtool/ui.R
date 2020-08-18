@@ -57,6 +57,23 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                               column(1),
                               column(1)
                               
+                             ),
+                            
+                            fluidRow(
+                              column(1),
+                              column(1),
+                              column(2, style = "border-style: dotted; border-color: #E7625F; min-height: 300px; max-height: 500px", 
+                                     fluidRow(HTML(welcome_box_4), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
+                                     fluidRow(align = "center", actionButton("button_four", "VIEW ANALYSIS", 
+                                                                             style = "color: #E7625F; background-color: #ffffff; border-color: #E7625F"))
+                              ),
+                              column(1),
+                              
+                              column(2, style = "border-style: dotted; border-color: #F7C9B6; min-height: 300px; max-height: 500px",
+                                     fluidRow(HTML(welcome_box_5), style = "min-height: 250px; margin-left: 20px; margin-right: 20px;"),
+                                     fluidRow(align = "center", actionButton("button_five", "VIEW ANALYSIS", 
+                                                                             style = "color: #F7C9B6; background-color: #ffffff; border-color: #F7C9B6"))
+                              )
                              )
                             
                             ),
@@ -139,6 +156,8 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                          )
                                         )
                                        ),
+                   
+                   #----------------------Money page header-----------------------------------
                    tabPanel(navtab4,
                      fluidRow(h1("Money Analysis")
                             ),
@@ -152,7 +171,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                               ),
                               mainPanel(
                                 fluidRow(column(9,
-                                                h3("Net Gold by Episode"),
+                                                h3("Finances by Episode"),
                                                 shinycssloaders::withSpinner(plotOutput("waterfall", height = "550px")),
                                                 br(),
                                                 p("All values are adjusted to their gold equivalent.")
@@ -162,6 +181,36 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                              )
                             )
                            ),
+                   
+                   #----------------------Spellcasting page header----------------------------
+                   tabPanel(navtab5,
+                            fluidRow(h1("Spellcasting Analysis")
+                            ),
+                            tabsetPanel(id = "spell_tabs",
+                                        tabPanel("Overall Spells Usage",
+                                                 sidebarLayout(
+                                                   sidebarPanel(
+                                                     h2("Page Details"),
+                                                     p("This page produces a range of data visualisations for spells cast in Campaign 2.")
+                                                   ),
+                                                   mainPanel(
+                                                     fluidRow(column(10,
+                                                                     h3("Total Spellcasting Counts by Spell Level"),
+                                                                     shinycssloaders::withSpinner(highchartOutput("spell_bar", height = "550px"))
+                                                     )
+                                                    ),
+                                                    fluidRow(column(10,
+                                                                    h3("Breakdown by Level and Spell Name"),
+                                                                    radioButtons("spell_selector", "", choices = the_spell_levels,
+                                                                                 selected = the_spell_levels[1], inline = TRUE),
+                                                                    shinycssloaders::withSpinner(highchartOutput("spell_tree", height = "550px"))
+                                                     )
+                                                    )
+                                                   )
+                                                  )
+                                                 )
+                                                )
+                                               ),
                    
                    #----------------------State space modelling header------------------------
                    tabPanel(navtab2,

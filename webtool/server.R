@@ -31,6 +31,24 @@ shinyServer <- function(input, output, session) {
     })
   })
   
+  observe({
+    if(input$button_four == 0){
+      return()
+    }
+    isolate({
+      updateTabsetPanel(session, "page_tab", select = navtab4)
+    })
+  })
+  
+  observe({
+    if(input$button_five == 0){
+      return()
+    }
+    isolate({
+      updateTabsetPanel(session, "page_tab", select = navtab5)
+    })
+  })
+  
   #------------------------DATA PREP---------------------------------------
   
   #-------------------
@@ -355,19 +373,20 @@ shinyServer <- function(input, output, session) {
   
   output$waterfall <- renderPlot({
     
-    water_palette <- c("Positive" = "#A0E7E5",
-                       "Negative" = "#FD62AD",
-                       "Zero" = "#189AB4")
+    water_data_1 <- water_data %>%
+      filter(episode == input$money_episodes)
     
-    water <- water_data %>%
-      filter(episode == input$money_episodes) %>%
-      ggplot(aes(x = coin, y = value, fill = direction)) +
-      geom_bar(stat = "identity") +
+    water <- water_data_1 %>%
+      ggplot(aes(x = coin, y = value, fill = type)) +
+      geom_bar(data = subset(water_data_1, type == "Gained"), stat = "identity") + 
+      geom_bar(data = subset(water_data_1, type == "Paid"), stat = "identity") +
       theme_bw() +
       labs(x = "Coin Type",
-           y = "Value (Scaled to value in gold)") +
-      scale_fill_manual(values = water_palette) +
-      theme(legend.position = "none",
+           y = "Value (Scaled to value in gold)",
+           fill = NULL) +
+      coord_flip() +
+      scale_fill_manual(values = c("#A0E7E5", "#FD62AD")) +
+      theme(legend.position = "bottom",
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
             panel.background = element_rect(fill = alpha("white", 0.2)),
@@ -387,6 +406,44 @@ shinyServer <- function(input, output, session) {
   
   #------------------------SPELLCASTING TAB--------------------------------
   
+  # Barplot
   
+  output$spell_bar <- renderHighchart({
+    
+    spell_filt_agg <- spell_data %>%
+      group_by(spell_level) %>%
+      summarise(casts = sum(casts)) %>%
+      ungroup()
+    
+    hc <- spell_filt_agg %>%
+      hchart(
+        "treemap", 
+        hcaes(x = spell_level, value = casts, color = casts)
+      ) %>%
+      hc_colorAxis(stops = color_stops(n = 6, colors = c("#05445E", "#189AB4", "#A0E7E5", 
+                                                         "#75E6DA", "#F7C9B6", "#FD62AD")))
+    
+    return(hc)
+    
+  })
+  
+  # Treemap
+  
+  output$spell_tree <- renderHighchart({
+    
+    spell_filt <- spell_data %>%
+      filter(spell_level == input$spell_selector)
+    
+    hc1 <- spell_filt %>%
+      hchart(
+        "treemap", 
+        hcaes(x = spell, value = casts, color = casts)
+      ) %>%
+      hc_colorAxis(stops = color_stops(n = 6, colors = c("#05445E", "#189AB4", "#A0E7E5", 
+                                                         "#75E6DA", "#F7C9B6", "#FD62AD")))
+    
+    return(hc1)
+    
+  })
   
 }

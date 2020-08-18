@@ -10,14 +10,13 @@ library(readxl)
 library(janitor)
 library(rstan)
 library(png)
-library(ggridges)
 library(googlesheets4)
 library(plotly)
 library(shinycssloaders)
 library(nnet)
-library(sjPlot)
 library(caTools)
 library(mgcv)
+library(highcharter)
 
 # Load HTML files
 
@@ -49,6 +48,7 @@ navtab1 <- "CHARACTER ANALYSIS"
 navtab2 <- "STATISTICAL MODELLING"
 navtab3 <- "ABOUT"
 navtab4 <- "MONEY ANALYSIS"
+navtab5 <- "SPELLCASTING ANALYSIS"
 
 # List of characters
 
@@ -94,3 +94,6 @@ the_roll_values <- unique(bar_rolls_data$total_value)
 
 water_data <- money_prep(money)
 the_episodes <- unique(water_data$episode)
+
+spell_data <- spell_prep(spellcasting)
+the_spell_levels <- unique(spell_data$spell_level)
