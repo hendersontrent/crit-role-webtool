@@ -139,6 +139,29 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                          )
                                         )
                                        ),
+                   tabPanel(navtab4,
+                     fluidRow(h1("Money Analysis")
+                            ),
+                            fluidRow(
+                              sidebarLayout(
+                                sidebarPanel(
+                                  h2("Page Details"),
+                                  p("This page analyses The Mighty Nein's income and expenses by episode."),
+                                  selectInput("money_episodes", "Select an episode", choices = the_episodes,
+                                              selected = the_episodes[1], multiple = FALSE)
+                              ),
+                              mainPanel(
+                                fluidRow(column(9,
+                                                h3("Net Gold by Episode"),
+                                                shinycssloaders::withSpinner(plotOutput("waterfall", height = "550px")),
+                                                br(),
+                                                p("All values are adjusted to their gold equivalent.")
+                                )
+                               )
+                              )
+                             )
+                            )
+                           ),
                    
                    #----------------------State space modelling header------------------------
                    tabPanel(navtab2,

@@ -280,3 +280,50 @@ cleaner <- function(data){
   
   return(data)
 }
+
+#----------------- MONEY ----------------------------------
+
+money_prep <- function(data){
+  
+  data <- money %>%
+    clean_names() %>%
+    dplyr::select(-c(total_gained_in_gold, total_paid_in_gold, net_platinum, net_gold,
+                     net_silver, net_copper, total_net_in_gold)) %>%
+    mutate(net_platinum = (gained_platinum + paid_platinum)*10,
+           net_gold = gained_gold + paid_gold,
+           net_silver = (gained_silver + paid_silver)/10,
+           net_copper = (gained_copper + paid_copper)/100) %>%
+    group_by(episode) %>%
+    summarise(net_platinum = sum(net_platinum),
+              net_gold = sum(net_gold),
+              net_silver = sum(net_silver),
+              net_copper = net_copper) %>%
+    ungroup() %>%
+    mutate(net_total = net_platinum + net_gold + net_silver + net_copper) %>%
+    gather(key = coin, value = value, 2:6) %>%
+    mutate(coin = gsub(".*_", "\\1", coin)) %>%
+    mutate(coin = str_to_title(coin)) %>%
+    drop_na() %>%
+    filter(episode != "TOTALS") %>%
+    mutate(coin = factor(coin, levels = c("Copper", "Silver", "Gold", "Platinum", "Total"))) %>%
+    #mutate(indicator = case_when(
+    #       value == 0 & coin != "Total" ~ "Remove",
+    #       TRUE                         ~ "Keep")) %>%
+    #filter(indicator == "Keep") %>%
+    #dplyr::select(-c(indicator)) %>%
+    mutate(direction = case_when(
+           value == 0 ~ "Zero",
+           value < 0  ~ "Negative",
+           value > 0  ~ "Positive")) %>%
+    mutate(id = case_when(
+           coin == "Copper"   ~ 1,
+           coin == "Silver"   ~ 2,
+           coin == "Gold"     ~ 3,
+           coin == "Platinum" ~ 4,
+           coin == "Total"    ~ 5))
+  
+}
+
+#----------------- SPELLCASTING ---------------------------
+
+

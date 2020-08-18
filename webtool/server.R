@@ -351,4 +351,42 @@ shinyServer <- function(input, output, session) {
   },
   bg = "transparent")
   
+  #------------------------MONEY TAB---------------------------------------
+  
+  output$waterfall <- renderPlot({
+    
+    water_palette <- c("Positive" = "#A0E7E5",
+                       "Negative" = "#FD62AD",
+                       "Zero" = "#189AB4")
+    
+    water <- water_data %>%
+      filter(episode == input$money_episodes) %>%
+      ggplot(aes(x = coin, y = value, fill = direction)) +
+      geom_bar(stat = "identity") +
+      theme_bw() +
+      labs(x = "Coin Type",
+           y = "Value (Scaled to value in gold)") +
+      scale_fill_manual(values = water_palette) +
+      theme(legend.position = "none",
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_rect(fill = alpha("white", 0.2)),
+            plot.background = element_rect(fill = alpha("white", 0.2)),
+            legend.background = element_rect(fill = alpha("white", 0.2)),
+            axis.title = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+    print(water)
+    
+    #ggplotly(water, tooltip = c("text")) %>%
+    #  layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+    #         paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+    #  config(displayModeBar = F)
+    
+  },
+  bg = "transparent")
+  
+  #------------------------SPELLCASTING TAB--------------------------------
+  
+  
+  
 }
