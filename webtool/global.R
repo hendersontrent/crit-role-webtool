@@ -10,13 +10,14 @@ library(readxl)
 library(janitor)
 library(rstan)
 library(png)
-library(googlesheets4)
 library(plotly)
 library(shinycssloaders)
 library(nnet)
 library(caTools)
 library(mgcv)
 library(highcharter)
+library(igraph)
+library(networkD3)
 
 # Load HTML files
 
@@ -45,10 +46,10 @@ for(d in data_files){
 
 navtab0 <- "HOME"
 navtab1 <- "CHARACTER ANALYSIS"
-navtab2 <- "STATISTICAL MODELLING"
 navtab3 <- "ABOUT"
-navtab4 <- "MONEY ANALYSIS"
+navtab4 <- "MONETARY ANALYSIS"
 navtab5 <- "SPELLCASTING ANALYSIS"
+navtab6 <- "POTION ANALYSIS"
 
 # List of characters
 
@@ -77,9 +78,7 @@ healing <- read_excel("data/Healing Given - Wildemount.xlsx", sheet = 1)
 rolls_raw <- read_excel_allsheets("data/All Rolls - Wildemount.xlsx")
 money <- read_excel("data/money_clean.xlsx")
 spellcasting <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 3)
-
-#damage <- read_sheet("https://docs.google.com/spreadsheets/d/1SSrrWbtx1i4EJBPXLSfhcbiOrWXHdd0WW7-9oGt2dm4/edit#gid=0")
-#healing <- read_sheet("https://docs.google.com/spreadsheets/d/1wlauv_gP3m8JQyXNbwNYS-WwPtvYFo88mjNLJEEQstQ/edit#gid=0")
+potions <- read_excel("data/Potions Consumed - Wildemount.xlsx")
 
 # Turn off scientific notation
 
@@ -97,3 +96,43 @@ the_episodes <- unique(water_data$episode)
 
 spell_data <- spell_prep(spellcasting)
 the_spell_levels <- unique(spell_data$spell_level)
+
+# Prep the data for character-level spellcasting
+
+beau_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 4) %>%
+  clean_names() %>%
+  mutate(character = "Beau")
+
+cad_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 5) %>%
+  clean_names() %>%
+  mutate(character = "Caduceus")
+
+caleb_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 6) %>%
+  clean_names() %>%
+  mutate(character = "Caleb")
+
+fjord_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 7) %>%
+  clean_names() %>%
+  mutate(character = "Fjord")
+
+jester_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 8) %>%
+  clean_names() %>%
+  mutate(character = "Jester")
+
+molly_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 9) %>%
+  clean_names() %>%
+  mutate(character = "Molly")
+
+nott_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 10) %>%
+  clean_names() %>%
+  mutate(character = "Veth/Nott")
+
+yasha_spells <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 11) %>%
+  clean_names() %>%
+  mutate(character = "Yasha")
+
+all_ch_spells <- bind_rows(beau_spells, cad_spells, caleb_spells, fjord_spells, jester_spells,
+                           molly_spells, nott_spells, yasha_spells) %>%
+  dplyr::select(c(1:4))
+
+sankey_list <- unique(all_ch_spells$character)
