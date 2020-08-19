@@ -292,37 +292,6 @@ shinyServer <- function(input, output, session) {
     
   })
   
-  #------------------------STATE SPACE TAB---------------------------------
-  
-  output$ss_model <- renderPlot({
-    
-    p <- raw_data %>%
-      ggplot(aes(x = episode)) +
-      geom_ribbon(data = full_models, 
-                  aes(x = episode, ymin = lower, ymax = upper, fill = variable), alpha = 0.4) +
-      geom_line(data = full_models, 
-                aes(x = episode, y = mean, colour = variable), size = 1.1) +
-      geom_point(data = raw_data, aes(x = episode, y = value), size = 2, colour = "black") +
-      labs(x = "Episode",
-           y = "Episode Sum Value") +
-      theme_bw() +
-      scale_colour_manual(values = ss_palette) +
-      scale_fill_manual(values = ss_palette) +
-      guides(fill = FALSE) +
-      theme(legend.position = "none",
-            panel.grid.minor =  element_blank(),
-            strip.background = element_rect(fill = "#E7F2F8"),
-            strip.text = element_text(face = "bold", colour = "black"),
-            panel.background = element_rect(fill = alpha("white", 0.2)),
-            plot.background = element_rect(fill = alpha("white", 0.2)),
-            legend.background = element_rect(fill = alpha("white", 0.2)),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold")) +
-      facet_grid(variable ~.)
-    print(p)
-  },
-  bg = "transparent")
-  
   #------------------------MONEY TAB---------------------------------------
   
   output$waterfall <- renderPlot({
@@ -398,6 +367,59 @@ shinyServer <- function(input, output, session) {
     
     return(hc1)
     
+  })
+  
+  # Sankey diagram
+  
+  output$sankey_plot <- renderSimpleNetwork({
+    
+    filtered_ch_spells <- all_ch_spells %>%
+      filter(character == input$network_character)
+    
+    p <- simpleNetwork(filtered_ch_spells,        
+                       Source = 1,                 # column number
+                       Target = 3,                 # column number
+                       linkDistance = 50,          # distance between nodes
+                       charge = -9,                # big negative = further away
+                       fontSize = 12,              
+                       fontFamily = "serif",       
+                       linkColour = "#189AB4",     # colour of edges
+                       nodeColour = "#FD62AD",     # colour of nodes
+                       opacity = 0.9,              # opacity of nodes
+                       zoom = T)
+    p
+    
+  })
+  
+  #------------------------POTIONS TAB-----------------------------------
+  
+  output$potion_sankey <- renderSankeyNetwork({
+    
+    links <- potion_prep(potions) %>%
+      rename(source = administered_by,
+             target = administered_to,
+             value = healing) %>%
+      group_by(source, target) %>%
+      summarise(value = sum(value)) %>%
+      ungroup()
+
+    nodes <- data.frame(
+      name = c(as.character(links$source), 
+             as.character(links$target)) %>% 
+        unique())
+    
+    links$IDsource <- match(links$source, nodes$name)-1 
+    links$IDtarget <- match(links$target, nodes$name)-1
+    
+    sankey_palette <- 'd3.scaleOrdinal() .domain(["Beau", "Caduceus", "Fjord", "Nott", "Yasha", "Caleb", "Shakäste", "Jester", "Pumat Sol", "Molly"]) .range(["#A0E7E5", "#189AB4", "#9571AB", "#75E6DA", "#05445E", "#FD62AD", "#F7C9B6", "#E7625F", "#FEB06A", "#A91B60"])'
+    
+    p <- sankeyNetwork(Links = links, Nodes = nodes,
+                       Source = "IDsource", Target = "IDtarget",
+                       Value = "value", NodeID = "name", 
+                       fontSize = 14, sinksRight = TRUE,
+                       colourScale = sankey_palette)
+    p
+  
   })
   
 }

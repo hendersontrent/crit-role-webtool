@@ -368,3 +368,18 @@ spell_prep <- function(data){
   return(spells)
   
 }
+
+#----------------- POTIONS --------------------------------
+
+potion_prep <- function(data){
+  
+  potion_clean <- data %>%
+    clean_names() %>%
+    mutate(healing = str_extract(effect, "[0-9]+")) %>%
+    drop_na() %>%
+    mutate(healing = as.numeric(healing)) %>%
+    dplyr::select(c(administered_by, administered_to, healing))
+  
+  return(potion_clean)
+  
+}

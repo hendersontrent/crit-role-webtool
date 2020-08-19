@@ -30,23 +30,42 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                               column(8, style = "min-height: 150px;",
                                      HTML(splash_page_content)
                               )
-                             )
+                             ),
+                            fluidRow(h3("")),
+                            fluidRow(h3("")),
+                            fluidRow(h3(""))
                             ),
                    
                    #----------------------Spellcasting page header----------------------------
                    tabPanel(navtab5,
                             fluidRow(h1("Spellcasting Analysis")
                             ),
+                            tabsetPanel(id = "spellcasting_tabs",
+                                        tabPanel("Overall Spellcasting",
                             fluidRow(column(11,
                                             h3("Breakdown by Level and Spell Name"),
                                             radioButtons("spell_selector", "", choices = the_spell_levels,
                                                          selected = the_spell_levels[1], inline = TRUE),
                                             shinycssloaders::withSpinner(highchartOutput("spell_tree", height = "550px"))
-                             )
+                              )
                             ),
                             fluidRow(column(11,
                                             h3("Total Spellcasting Counts by Spell Level"),
                                             shinycssloaders::withSpinner(highchartOutput("spell_bar", height = "550px"))
+                             )
+                            )
+                           ),
+                           tabPanel("Spellcasting by Character",
+                                    fluidRow(column(11,
+                                                    h3("Spells by Character and Level"),
+                                    radioButtons("network_character", "Which character do you want to visualise?", choices = sankey_list,
+                                                 selected = sankey_list[1], inline = TRUE),
+                                    p("Use your mouse or trackpad to zoom in and drag the plot around to better see the spells used."),
+                                    br(),
+                                    shinycssloaders::withSpinner(simpleNetworkOutput("sankey_plot", height = "550px"))
+                             
+                              )
+                             )
                             )
                            )
                           ),
@@ -130,6 +149,19 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                         )
                                        ),
                    
+                   #----------------------Potions page header---------------------------------
+                   tabPanel(navtab6,
+                            fluidRow(h1("Potions Analysis")
+                            ),
+                            fluidRow(column(11,
+                                            h3("Potion Administration by Character"),
+                                            p("Hover over a path to see the total healing provided by potions."),
+                                            br(),
+                                            shinycssloaders::withSpinner(sankeyNetworkOutput("potion_sankey", height = "550px"))
+                            )
+                           )
+                          ),
+                   
                    #----------------------Money page header-----------------------------------
                    tabPanel(navtab4,
                      fluidRow(h1("Money Analysis")
@@ -154,29 +186,6 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                              )
                             )
                            ),
-                   
-                   #----------------------State space modelling header------------------------
-                   tabPanel(navtab2,
-                            fluidRow(h1("State Space Modelling")
-                            ),
-                            fluidRow(
-                              sidebarLayout(
-                                sidebarPanel(
-                                  h2("Page Details"),
-                                  p("This page produces outputs from a Bayesian state space model that was written to analyse damage dealt and healing given by episode.")
-                                ),
-                                mainPanel(
-                                  fluidRow(column(9,
-                                    h3("State Space Model Output"),
-                                    shinycssloaders::withSpinner(plotOutput("ss_model", height = "550px")),
-                                    br(),
-                                    p("Points indicate actual data (aggregated sums per episode across all characters). Lines indicate mean posterior estimates. Shaded areas indicate 95% credible intervals.")
-                                   )
-                                  )
-                                 )
-                                )
-                               )
-                              ),
                    
                    #----------------------Help page header------------------------------------
                    tabPanel(navtab3,
