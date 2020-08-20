@@ -414,17 +414,25 @@ shinyServer <- function(input, output, session) {
     links$IDsource <- match(links$source, nodes$name)-1 
     links$IDtarget <- match(links$target, nodes$name)-1
     
-    colour_scale <- data.frame(
+    colour_scale_1 <- data.frame(
       domain = c("Cantrip", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Unknown"),
       range = c("#A0E7E5", "#189AB4", "#75E6DA", "#9571AB", "#05445E", "#FD62AD", "#F7C9B6", "#E7625F"),
-      stringsAsFactors = FALSE) %>%
-      inner_join(links, by = c("domain" = "source")) %>%
+      stringsAsFactors = FALSE)
+    
+    colour_scale <- links %>%
+      inner_join(colour_scale_1, by = c("source" = "domain")) %>%
+      rename(domain = source) %>%
       dplyr::select(c(domain, range))
     
     p <- sankeyNetwork(Links = links, Nodes = nodes,
                        Source = "IDsource", Target = "IDtarget", units = "casts",
-                       Value = "value", NodeID = "name",
-                       fontSize = 14, fontFamily = "serif")
+                       Value = "value", NodeID = "name", LinkGroup = "source",
+                       fontSize = 14, fontFamily = "serif")#, 
+                       #colourScale = JS(
+                      #   sprintf(
+                      #     'd3.scaleOrdinal() .domain(%s) .range(%s)',
+                      #     jsonlite::toJSON(colour_scale$domain),
+                      #     jsonlite::toJSON(colour_scale$range))))
     p
     
   })
@@ -454,7 +462,7 @@ shinyServer <- function(input, output, session) {
     p <- sankeyNetwork(Links = links, Nodes = nodes,
                        Source = "IDsource", Target = "IDtarget",
                        Value = "value", NodeID = "name", 
-                       fontSize = 14, sinksRight = TRUE,
+                       fontSize = 20, LinkGroup = "source",
                        colourScale = sankey_palette)
     p
   
