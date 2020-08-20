@@ -1,4 +1,4 @@
-## Critical Role Statistical Analysis Tool
+## Critical Role Statistical Visualiser
 ***
 
 ### What is this application?

@@ -3,7 +3,7 @@
 shinyUI(navbarPage(theme = "corp-styles.css", 
                    title = div(img(src = "orbisant_logo.png", height = '50px', hspace = '30'),
                                ""),
-                   position = c("static-top"), windowTitle = "Critical Role: A Statistical Exploration",
+                   position = c("static-top"), windowTitle = "Critical Role Statistical Visualiser",
                    id = "page_tab",
                    
                    
@@ -41,29 +41,37 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                             fluidRow(h1("Spellcasting Analysis")
                             ),
                             tabsetPanel(id = "spellcasting_tabs",
-                                        tabPanel("Overall Spellcasting",
-                            fluidRow(column(11,
-                                            h3("Breakdown by Level and Spell Name"),
-                                            radioButtons("spell_selector", "", choices = the_spell_levels,
-                                                         selected = the_spell_levels[1], inline = TRUE),
-                                            shinycssloaders::withSpinner(highchartOutput("spell_tree", height = "550px"))
+                              tabPanel("Overall Spellcasting",
+                              fluidRow(column(11,
+                                              h3("Breakdown by Level and Spell Name"),
+                                              radioButtons("spell_selector", "", choices = the_spell_levels,
+                                                           selected = the_spell_levels[1], inline = TRUE),
+                                              shinycssloaders::withSpinner(highchartOutput("spell_tree", height = "550px"))
+                               )
+                              ),
+                              fluidRow(column(11,
+                                              h3("Total Spellcasting Counts by Spell Level"),
+                                              shinycssloaders::withSpinner(highchartOutput("spell_bar", height = "550px"))
+                               )
                               )
-                            ),
-                            fluidRow(column(11,
-                                            h3("Total Spellcasting Counts by Spell Level"),
-                                            shinycssloaders::withSpinner(highchartOutput("spell_bar", height = "550px"))
-                             )
-                            )
-                           ),
+                             ),
                            tabPanel("Spellcasting by Character",
                                     fluidRow(column(11,
                                                     h3("Spells by Character and Level"),
                                     radioButtons("network_character", "Which character do you want to visualise?", choices = sankey_list,
                                                  selected = sankey_list[1], inline = TRUE),
+                                    tabsetPanel(id = "spell_ch_tabs",
+                                      tabPanel("Network Visualisation",
                                     p("Use your mouse or trackpad to zoom in and drag the plot around to better see the spells used."),
                                     br(),
                                     shinycssloaders::withSpinner(simpleNetworkOutput("sankey_plot", height = "550px"))
-                             
+                                      ),
+                                    tabPanel("Sankey Diagram Visualisation",
+                                      p("Hover over a pathway with your mouse to see the total number of casts."),
+                                      br(),
+                                      shinycssloaders::withSpinner(sankeyNetworkOutput("ch_spell_sankey", height = "825px"))
+                                )
+                               )
                               )
                              )
                             )

@@ -369,7 +369,7 @@ shinyServer <- function(input, output, session) {
     
   })
   
-  # Sankey diagram
+  # Network diagram
   
   output$sankey_plot <- renderSimpleNetwork({
     
@@ -379,14 +379,52 @@ shinyServer <- function(input, output, session) {
     p <- simpleNetwork(filtered_ch_spells,        
                        Source = 1,                 # column number
                        Target = 3,                 # column number
-                       linkDistance = 50,          # distance between nodes
-                       charge = -9,                # big negative = further away
+                       linkDistance = 75,          # distance between nodes
+                       charge = -15,                # big negative = further away
                        fontSize = 12,              
                        fontFamily = "serif",       
                        linkColour = "#189AB4",     # colour of edges
                        nodeColour = "#FD62AD",     # colour of nodes
                        opacity = 0.9,              # opacity of nodes
                        zoom = T)
+    p
+    
+  })
+  
+  output$ch_spell_sankey <- renderSankeyNetwork({
+    
+    links <- all_ch_spells %>%
+      filter(character == input$network_character) %>%
+      mutate(indicator = case_when(
+             character == "Caleb" & spell == "Smiles" ~ "Delete",
+             TRUE                                     ~ "Keep")) %>%
+      filter(indicator == "Keep") %>%
+      group_by(spell, level) %>%
+      summarise(number_times_cast = sum(number_times_cast)) %>%
+      ungroup() %>%
+      rename(source = level,
+             target = spell,
+             value = number_times_cast)
+    
+    nodes <- data.frame(
+      name = c(as.character(links$source), 
+               as.character(links$target)) %>% 
+        unique())
+    
+    links$IDsource <- match(links$source, nodes$name)-1 
+    links$IDtarget <- match(links$target, nodes$name)-1
+    
+    colour_scale <- data.frame(
+      domain = c("Cantrip", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Unknown"),
+      range = c("#A0E7E5", "#189AB4", "#75E6DA", "#9571AB", "#05445E", "#FD62AD", "#F7C9B6", "#E7625F"),
+      stringsAsFactors = FALSE) %>%
+      inner_join(links, by = c("domain" = "source")) %>%
+      dplyr::select(c(domain, range))
+    
+    p <- sankeyNetwork(Links = links, Nodes = nodes,
+                       Source = "IDsource", Target = "IDtarget", units = "casts",
+                       Value = "value", NodeID = "name",
+                       fontSize = 14, fontFamily = "serif")
     p
     
   })
