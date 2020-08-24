@@ -195,6 +195,42 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                             )
                            ),
                    
+                   #----------------------Vox Machina page header-----------------------------
+                   tabPanel(navtab7,
+                            fluidRow(h1("Vox Machina")
+                            ),
+                            tabsetPanel(id = "vm_tabs",
+                                        tabPanel("Spellcasting",
+                                                 fluidRow(column(11,
+                                                                 h3("Total Spellcasting Counts by Spell Level"),
+                                                                 shinycssloaders::withSpinner(highchartOutput("spell_bar_vm", height = "550px"))
+                                                  )
+                                                 ),
+                                                 fluidRow(column(11,
+                                                                 h3("Breakdown by Level and Spell Name"),
+                                                                 radioButtons("spell_selector_vm", "", choices = the_spell_levels_vm,
+                                                                              selected = the_spell_levels_vm[1], inline = TRUE),
+                                                                 shinycssloaders::withSpinner(highchartOutput("spell_tree_vm", height = "550px"))
+                                                  )
+                                                 )
+                                                ),
+                                        tabPanel("Damage Dealt",
+                                                 fluidRow(column(11,
+                                                                 h3("Overview of Character Combat"),
+                                                                 p("Hover over a point to see details."),
+                                                                 column(5,
+                                                                        h4("Total Damage Dealt and Taken and Total Times KO'd"),
+                                                                        shinycssloaders::withSpinner(plotlyOutput("bubble_vm", height = "550px"))),
+                                                                 column(1),
+                                                                 column(5,
+                                                                        h4("Average Damage Dealt and Taken and Total Times KO'd"),
+                                                                        shinycssloaders::withSpinner(plotlyOutput("bubble_vm_av", height = "550px")))
+                                                 )
+                                                )
+                                               )
+                                              )
+                                             ),
+                   
                    #----------------------Help page header------------------------------------
                    tabPanel(navtab3,
                             fluidRow(h1("About")

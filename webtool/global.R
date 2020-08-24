@@ -50,6 +50,7 @@ navtab3 <- "ABOUT"
 navtab4 <- "MONETARY ANALYSIS"
 navtab5 <- "SPELLCASTING ANALYSIS"
 navtab6 <- "POTION ANALYSIS"
+navtab7 <- "VOX MACHINA"
 
 # List of characters
 
@@ -67,6 +68,9 @@ the_palette <- c("Beau" = "#A0E7E5",
                  "Yasha" = "#F7C9B6",
                  "Molly" = "#E7625F")
 
+vm_palette <- c("#A0E7E5","#75E6DA","#189AB4","#05445E","#9571AB",
+                 "#FD62AD","#F7C9B6","#E7625F")
+
 # Make a palette for the state space model
 
 ss_palette <- c("#F84791", "#FFA384")
@@ -79,6 +83,7 @@ rolls_raw <- read_excel_allsheets("data/All Rolls - Wildemount.xlsx")
 money <- read_excel("data/money_clean.xlsx")
 spellcasting <- read_excel("data/Spells Cast - Wildemount.xlsx", sheet = 3)
 potions <- read_excel("data/Potions Consumed - Wildemount.xlsx")
+spellcasting_vm <- read_excel("data/Spells Cast - Tal'Dorei.xlsx", sheet = 2)
 
 # Turn off scientific notation
 
@@ -96,6 +101,9 @@ the_episodes <- unique(water_data$episode)
 
 spell_data <- spell_prep(spellcasting)
 the_spell_levels <- unique(spell_data$spell_level)
+
+spell_data_vm <- spell_prep_vm(spellcasting_vm)
+the_spell_levels_vm <- unique(spell_data_vm$spell_level)
 
 # Prep the data for character-level spellcasting
 

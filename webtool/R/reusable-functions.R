@@ -383,3 +383,96 @@ potion_prep <- function(data){
   return(potion_clean)
   
 }
+
+#----------------- VOX MACHINA ----------------------------
+
+# Spellcasting
+
+spell_prep_vm <- function(data){
+  
+  cantrip <- data %>%
+    clean_names() %>%
+    dplyr::select(c(1:2)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Cantrip")
+  
+  spell_1 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(3:4)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 1")
+  
+  spell_2 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(5:6)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 2")
+  
+  spell_3 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(7:8)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 3")
+  
+  spell_4 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(9:10)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 4")
+  
+  spell_5 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(11:12)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 5")
+  
+  spell_6 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(13:14)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 6")
+  
+  spell_7 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(15:16)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 7")
+  
+  spell_8 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(17:18)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 8")
+  
+  spell_9 <- data %>%
+    clean_names() %>%
+    dplyr::select(c(19:20)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 9")
+  
+  spell_unknown <- data %>%
+    clean_names() %>%
+    dplyr::select(c(21:22)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Level 1")
+  
+  # Bind all
+  
+  spells <- bind_rows(cantrip, spell_1, spell_2, spell_3, spell_4, spell_5, spell_6, 
+                      spell_7, spell_8, spell_9, spell_unknown) %>%
+    drop_na()
+  
+  return(spells)
+  
+}
