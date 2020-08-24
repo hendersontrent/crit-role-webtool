@@ -329,7 +329,7 @@ shinyServer <- function(input, output, session) {
   
   #------------------------SPELLCASTING TAB--------------------------------
   
-  # Barplot
+  # Aggregated treemap
   
   output$spell_bar <- renderHighchart({
     
@@ -466,6 +466,138 @@ shinyServer <- function(input, output, session) {
                        colourScale = sankey_palette)
     p
   
+  })
+  
+  #------------------------VOX MACHINA TAB-------------------------------
+  
+  # Aggregated treemap
+  
+  output$spell_bar_vm <- renderHighchart({
+    
+    spell_filt_agg <- spell_data_vm %>%
+      group_by(spell_level) %>%
+      summarise(casts = sum(casts)) %>%
+      ungroup()
+    
+    hc <- spell_filt_agg %>%
+      hchart(
+        "treemap", 
+        hcaes(x = spell_level, value = casts, color = casts)
+      ) %>%
+      hc_colorAxis(stops = color_stops(n = 6, colors = c("#05445E", "#189AB4", "#A0E7E5", 
+                                                         "#75E6DA", "#F7C9B6", "#FD62AD")))
+    
+    return(hc)
+    
+  })
+  
+  # Treemap
+  
+  output$spell_tree_vm <- renderHighchart({
+    
+    spell_filt <- spell_data_vm %>%
+      filter(spell_level == input$spell_selector_vm)
+    
+    hc1 <- spell_filt %>%
+      hchart(
+        "treemap", 
+        hcaes(x = spell, value = casts, color = casts)
+      ) %>%
+      hc_colorAxis(stops = color_stops(n = 6, colors = c("#05445E", "#189AB4", "#A0E7E5", 
+                                                         "#75E6DA", "#F7C9B6", "#FD62AD")))
+    
+    return(hc1)
+    
+  })
+  
+  # Bubble plot
+  
+  output$bubble_vm <- renderPlotly({
+    
+    bubble_data <- data.frame(
+      character = c("Vax'ildan", "Vex'ahlia", "Trinket", "Grog", "Scanlan", "Pike", "Keyleth", "Percy"),
+      dealt = c(9183,8514,438,10038,3354,1390,6126,8126),
+      taken = c(3045,3146,1294,5646,3701,2509,4760,3483),
+      kod = c(14,11,10,5,9,0,9,11)
+    )
+    
+    bubble_plot <- bubble_data %>%
+      ggplot(aes(x = taken, y = dealt, size = kod,
+                 text = paste('<b>Character:</b>', character,
+                              '<br><b>Damage Dealt:</b>', format(dealt, big.mark = ","),
+                              '<b>Damage Taken:</b>', format(taken, big.mark = ","),
+                              "<b>Times KO'd:</b>", kod))) +
+      geom_smooth(aes(group = 1), formula = y ~ x, method = "lm", colour = "black", size = 0.5,
+                  se = FALSE) +
+      geom_point(aes(colour = character)) +
+      labs(x = "Damage Taken",
+           y = "Damage Dealt",
+           size = "Times KO'd",
+           colour = NULL) +
+      scale_x_continuous(limits = c(0,10000),
+                         breaks = c(0,2000,4000,6000,8000,10000),
+                         labels = comma) +
+      scale_y_continuous(labels = comma) +
+      scale_colour_manual(values = vm_palette) +
+      theme_bw() +
+      theme(legend.position = "none",
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank(),
+            plot.background = element_blank(),
+            legend.background = element_blank(),
+            axis.title = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+    
+    ggplotly(bubble_plot, tooltip = c("text")) %>%
+      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+      config(displayModeBar = F)
+    
+  })
+  
+  output$bubble_vm_av <- renderPlotly({
+    
+    bubble_data_av <- data.frame(
+      character = c("Vax'ildan", "Vex'ahlia", "Trinket", "Grog", "Scanlan", "Pike", "Keyleth", "Percy"),
+      dealt = c(23.790,20.715,10.950,23.023,19.057,21.719,23.837,19.210),
+      taken = c(26.71,27.60,11.35,49.53,44.06,22.01,41.75,30.55),
+      kod = c(14,11,10,5,9,0,9,11)
+    )
+    
+    bubble_plot_av <- bubble_data_av %>%
+      ggplot(aes(x = taken, y = dealt, size = kod,
+                 text = paste('<b>Character:</b>', character,
+                              '<br><b>Av. Damage Dealt:</b>', dealt,
+                              '<b>Av. Damage Taken:</b>', taken,
+                              "<b>Times KO'd:</b>", kod))) +
+      geom_smooth(aes(group = 1), formula = y ~ x, method = "lm", colour = "black", size = 0.5,
+                  se = FALSE) +
+      geom_point(aes(colour = character)) +
+      labs(x = "Average Damage Taken",
+           y = "Average Damage Dealt",
+           size = "Times KO'd",
+           colour = NULL) +
+      scale_x_continuous(limits = c(0,50),
+                         breaks = c(0,10,20,30,40,50)) +
+      scale_y_continuous(limits = c(0,50),
+                         breaks = c(0,10,20,30,40,50)) +
+      scale_colour_manual(values = vm_palette) +
+      theme_bw() +
+      theme(legend.position = "none",
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank(),
+            plot.background = element_blank(),
+            legend.background = element_blank(),
+            axis.title = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+    
+    ggplotly(bubble_plot_av, tooltip = c("text")) %>%
+      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+      config(displayModeBar = F)
+    
   })
   
 }

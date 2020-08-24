@@ -14,6 +14,7 @@ Navigate through the app using the tabs at the top. Further details and instruct
 * __CHARACTER ANALYSIS__ Presents character-level analysis and visualisation of dice roll data.
 * __POTION ANALYSIS__ Presents visualisations of potion administration by character.
 * __MONETARY ANALYSIS__ Presents analysis of coins gained and paid by episode.
+* __VOX MACHINA__ Presents high level analysis of Vox Machina spell and combat data.
 
 
 ### Who made it?
@@ -37,4 +38,4 @@ If you have a GitHub account, you can log an issue or contribute to application 
 
 ### What are the future plans for the application?
 
-Currently, only data for The Mighty Nein is used in the app. It is intended that Vox Machina data will be added. Other creative data visualisations and statistical analyses for both campaigns are also likely to be added.
+Currently, most analysis in the app related to The Mighty Nein. It is intended that more Vox Machina data will be added in the near future. Other creative data visualisations and statistical analyses for both campaigns are also likely to be added.
