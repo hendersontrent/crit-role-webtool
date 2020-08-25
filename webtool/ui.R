@@ -153,6 +153,22 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                             )
                                            )
                                           )
+                                         ),
+                              tabPanel("Episodic Damage & Healing",
+                                       fluidRow(column(11,
+                                                       h3("Damage by Episode"),
+                                                       p("Hover over a point to see more information about it."),
+                                                       br(),
+                                                       shinycssloaders::withSpinner(plotlyOutput("loess_dam", height = "550px"))
+                                           )
+                                          ),
+                                       fluidRow(column(11,
+                                                       h3("Healing by Episode"),
+                                                       p("Hover over a point to see more information about it."),
+                                                       br(),
+                                                       shinycssloaders::withSpinner(plotlyOutput("loess_heal", height = "550px"))
+                                           )
+                                          )
                                          )
                                         )
                                        ),
