@@ -5,8 +5,8 @@ account: orbisantanalytics
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2672472
-bundleId: 3551110
+bundleId: 3553827
 url: https://orbisantanalytics.shinyapps.io/crit-role-statistical-tool/
-when: 1598272394.95997
+when: 1598326321.2069
 asMultiple: FALSE
 asStatic: FALSE
