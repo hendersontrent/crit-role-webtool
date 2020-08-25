@@ -110,9 +110,9 @@ shinyServer <- function(input, output, session) {
       filter(character == "Molly")
     
     if(input$dist_ep_selector == "All"){
-    
-    the_dens <- density_plotter(the_dens_data)
-    
+      
+      the_dens <- density_plotter(the_dens_data)
+      
     } else if(input$dist_ep_selector == "Levels under 6"){
       
       the_dens_init <- the_dens_data %>%
@@ -150,35 +150,35 @@ shinyServer <- function(input, output, session) {
     healing_max <- max(dam_heals$healing) # For locking cartesian coordinates in the plot
     
     if(input$gam_zero_selector == "Yes"){
-    
-    dam_heal_plot <- dam_heals %>%
-      mutate(character = case_when(
-        character == "Nott_veth"  ~ "Veth/Nott",
-        character == "Mollymauk"  ~ "Molly",
-        character == "Beauregard" ~ "Beau",
-        TRUE                      ~ character)) %>%
-      drop_na() %>%
-      filter(character == input$dist_char_selector) %>%
-      group_by(episode, character) %>%
-      summarise(damage = sum(damage),
-                healing = sum(healing)) %>%
-      ungroup() %>%
-      ggplot(aes(x = damage, y = healing)) +
-      geom_smooth(formula = y ~ s(x), method = "gam", fill = "#FEB06A", colour = "#FEB06A") +
-      geom_point(size = 4, colour = "#05445E") +
-      labs(x = "Damage Dealt",
-           y = "Healing Given") +
-      coord_cartesian(ylim = c(0, healing_max))  + # Constrains geom_smooth to 0-max range
-      theme_bw() +
-      theme(panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_rect(fill = alpha("white", 0.2)),
-            plot.background = element_rect(fill = alpha("white", 0.2)),
-            legend.background = element_rect(fill = alpha("white", 0.2)),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold"))
-    print(dam_heal_plot)
-    
+      
+      dam_heal_plot <- dam_heals %>%
+        mutate(character = case_when(
+          character == "Nott_veth"  ~ "Veth/Nott",
+          character == "Mollymauk"  ~ "Molly",
+          character == "Beauregard" ~ "Beau",
+          TRUE                      ~ character)) %>%
+        drop_na() %>%
+        filter(character == input$dist_char_selector) %>%
+        group_by(episode, character) %>%
+        summarise(damage = sum(damage),
+                  healing = sum(healing)) %>%
+        ungroup() %>%
+        ggplot(aes(x = damage, y = healing)) +
+        geom_smooth(formula = y ~ s(x), method = "gam", fill = "#FEB06A", colour = "#FEB06A") +
+        geom_point(size = 4, colour = "#05445E") +
+        labs(x = "Damage Dealt",
+             y = "Healing Given") +
+        coord_cartesian(ylim = c(0, healing_max))  + # Constrains geom_smooth to 0-max range
+        theme_bw() +
+        theme(panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_rect(fill = alpha("white", 0.2)),
+              plot.background = element_rect(fill = alpha("white", 0.2)),
+              legend.background = element_rect(fill = alpha("white", 0.2)),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      print(dam_heal_plot)
+      
     } else{
       
       dam_heal_plot <- dam_heals %>%
@@ -396,8 +396,8 @@ shinyServer <- function(input, output, session) {
     links <- all_ch_spells %>%
       filter(character == input$network_character) %>%
       mutate(indicator = case_when(
-             character == "Caleb" & spell == "Smiles" ~ "Delete",
-             TRUE                                     ~ "Keep")) %>%
+        character == "Caleb" & spell == "Smiles" ~ "Delete",
+        TRUE                                     ~ "Keep")) %>%
       filter(indicator == "Keep") %>%
       group_by(spell, level) %>%
       summarise(number_times_cast = sum(number_times_cast)) %>%
@@ -428,11 +428,11 @@ shinyServer <- function(input, output, session) {
                        Source = "IDsource", Target = "IDtarget", units = "casts",
                        Value = "value", NodeID = "name", LinkGroup = "source",
                        fontSize = 14, fontFamily = "serif")#, 
-                       #colourScale = JS(
-                      #   sprintf(
-                      #     'd3.scaleOrdinal() .domain(%s) .range(%s)',
-                      #     jsonlite::toJSON(colour_scale$domain),
-                      #     jsonlite::toJSON(colour_scale$range))))
+    #colourScale = JS(
+    #   sprintf(
+    #     'd3.scaleOrdinal() .domain(%s) .range(%s)',
+    #     jsonlite::toJSON(colour_scale$domain),
+    #     jsonlite::toJSON(colour_scale$range))))
     p
     
   })
@@ -448,10 +448,10 @@ shinyServer <- function(input, output, session) {
       group_by(source, target) %>%
       summarise(value = sum(value)) %>%
       ungroup()
-
+    
     nodes <- data.frame(
       name = c(as.character(links$source), 
-             as.character(links$target)) %>% 
+               as.character(links$target)) %>% 
         unique())
     
     links$IDsource <- match(links$source, nodes$name)-1 
@@ -465,7 +465,7 @@ shinyServer <- function(input, output, session) {
                        fontSize = 20, LinkGroup = "source",
                        colourScale = sankey_palette)
     p
-  
+    
   })
   
   #------------------------VOX MACHINA TAB-------------------------------
@@ -556,37 +556,37 @@ shinyServer <- function(input, output, session) {
         config(displayModeBar = F)
       
     } else{
-    
-    bubble_plot <- bubble_data %>%
-      ggplot(aes(x = taken, y = dealt, size = kod,
-                 text = paste('<b>Character:</b>', character,
-                              '<br><b>Damage Dealt:</b>', format(dealt, big.mark = ","),
-                              '<b>Damage Taken:</b>', format(taken, big.mark = ","),
-                              "<b>Times KO'd:</b>", kod))) +
-      geom_point(aes(colour = character)) +
-      labs(x = "Damage Taken",
-           y = "Damage Dealt",
-           size = "Times KO'd",
-           colour = NULL) +
-      scale_x_continuous(limits = c(0,10000),
-                         breaks = c(0,2000,4000,6000,8000,10000),
-                         labels = comma) +
-      scale_y_continuous(labels = comma) +
-      scale_colour_manual(values = vm_palette) +
-      theme_bw() +
-      theme(legend.position = "none",
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold"))
-    
-    ggplotly(bubble_plot, tooltip = c("text")) %>%
-      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
-             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
-      config(displayModeBar = F)
+      
+      bubble_plot <- bubble_data %>%
+        ggplot(aes(x = taken, y = dealt, size = kod,
+                   text = paste('<b>Character:</b>', character,
+                                '<br><b>Damage Dealt:</b>', format(dealt, big.mark = ","),
+                                '<b>Damage Taken:</b>', format(taken, big.mark = ","),
+                                "<b>Times KO'd:</b>", kod))) +
+        geom_point(aes(colour = character)) +
+        labs(x = "Damage Taken",
+             y = "Damage Dealt",
+             size = "Times KO'd",
+             colour = NULL) +
+        scale_x_continuous(limits = c(0,10000),
+                           breaks = c(0,2000,4000,6000,8000,10000),
+                           labels = comma) +
+        scale_y_continuous(labels = comma) +
+        scale_colour_manual(values = vm_palette) +
+        theme_bw() +
+        theme(legend.position = "none",
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.background = element_blank(),
+              legend.background = element_blank(),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      
+      ggplotly(bubble_plot, tooltip = c("text")) %>%
+        layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+               paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+        config(displayModeBar = F)
     }
     
   })
@@ -635,37 +635,37 @@ shinyServer <- function(input, output, session) {
         config(displayModeBar = F)
       
     } else{
-    
-    bubble_plot_av <- bubble_data_av %>%
-      ggplot(aes(x = taken, y = dealt, size = kod,
-                 text = paste('<b>Character:</b>', character,
-                              '<br><b>Av. Damage Dealt:</b>', dealt,
-                              '<b>Av. Damage Taken:</b>', taken,
-                              "<b>Times KO'd:</b>", kod))) +
-      geom_point(aes(colour = character)) +
-      labs(x = "Average Damage Taken",
-           y = "Average Damage Dealt",
-           size = "Times KO'd",
-           colour = NULL) +
-      scale_x_continuous(limits = c(0,50),
-                         breaks = c(0,10,20,30,40,50)) +
-      scale_y_continuous(limits = c(0,50),
-                         breaks = c(0,10,20,30,40,50)) +
-      scale_colour_manual(values = vm_palette) +
-      theme_bw() +
-      theme(legend.position = "none",
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold"))
-    
-    ggplotly(bubble_plot_av, tooltip = c("text")) %>%
-      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
-             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
-      config(displayModeBar = F)
+      
+      bubble_plot_av <- bubble_data_av %>%
+        ggplot(aes(x = taken, y = dealt, size = kod,
+                   text = paste('<b>Character:</b>', character,
+                                '<br><b>Av. Damage Dealt:</b>', dealt,
+                                '<b>Av. Damage Taken:</b>', taken,
+                                "<b>Times KO'd:</b>", kod))) +
+        geom_point(aes(colour = character)) +
+        labs(x = "Average Damage Taken",
+             y = "Average Damage Dealt",
+             size = "Times KO'd",
+             colour = NULL) +
+        scale_x_continuous(limits = c(0,50),
+                           breaks = c(0,10,20,30,40,50)) +
+        scale_y_continuous(limits = c(0,50),
+                           breaks = c(0,10,20,30,40,50)) +
+        scale_colour_manual(values = vm_palette) +
+        theme_bw() +
+        theme(legend.position = "none",
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.background = element_blank(),
+              legend.background = element_blank(),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      
+      ggplotly(bubble_plot_av, tooltip = c("text")) %>%
+        layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+               paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+        config(displayModeBar = F)
     }
     
   })

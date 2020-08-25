@@ -214,7 +214,7 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                                   )
                                                  )
                                                 ),
-                                        tabPanel("Damage Dealt",
+                                        tabPanel("Combat Damage",
                                                  fluidRow(column(11,
                                                                  h3("Overview of Character Combat"),
                                                                  p("Hover over a point to see details."),
