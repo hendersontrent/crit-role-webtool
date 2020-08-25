@@ -521,14 +521,48 @@ shinyServer <- function(input, output, session) {
       kod = c(14,11,10,5,9,0,9,11)
     )
     
+    if(input$name_selec_1 == "Yes"){
+      
+      bubble_plot <- bubble_data %>%
+        ggplot(aes(x = taken, y = dealt,
+                   text = paste('<b>Character:</b>', character,
+                                '<br><b>Damage Dealt:</b>', format(dealt, big.mark = ","),
+                                '<b>Damage Taken:</b>', format(taken, big.mark = ","),
+                                "<b>Times KO'd:</b>", kod))) +
+        geom_point(aes(colour = character, size = kod)) +
+        geom_text(aes(label = character)) +
+        labs(x = "Damage Taken",
+             y = "Damage Dealt",
+             size = "Times KO'd",
+             colour = NULL) +
+        scale_x_continuous(limits = c(0,10000),
+                           breaks = c(0,2000,4000,6000,8000,10000),
+                           labels = comma) +
+        scale_y_continuous(labels = comma) +
+        scale_colour_manual(values = vm_palette) +
+        theme_bw() +
+        theme(legend.position = "none",
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.background = element_blank(),
+              legend.background = element_blank(),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      
+      ggplotly(bubble_plot, tooltip = c("text")) %>%
+        layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+               paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+        config(displayModeBar = F)
+      
+    } else{
+    
     bubble_plot <- bubble_data %>%
       ggplot(aes(x = taken, y = dealt, size = kod,
                  text = paste('<b>Character:</b>', character,
                               '<br><b>Damage Dealt:</b>', format(dealt, big.mark = ","),
                               '<b>Damage Taken:</b>', format(taken, big.mark = ","),
                               "<b>Times KO'd:</b>", kod))) +
-      geom_smooth(aes(group = 1), formula = y ~ x, method = "lm", colour = "black", size = 0.5,
-                  se = FALSE) +
       geom_point(aes(colour = character)) +
       labs(x = "Damage Taken",
            y = "Damage Dealt",
@@ -553,6 +587,7 @@ shinyServer <- function(input, output, session) {
       layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
              paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
       config(displayModeBar = F)
+    }
     
   })
   
@@ -565,14 +600,48 @@ shinyServer <- function(input, output, session) {
       kod = c(14,11,10,5,9,0,9,11)
     )
     
+    if(input$name_selec_2 == "Yes"){
+      
+      bubble_plot_av <- bubble_data_av %>%
+        ggplot(aes(x = taken, y = dealt,
+                   text = paste('<b>Character:</b>', character,
+                                '<br><b>Av. Damage Dealt:</b>', dealt,
+                                '<b>Av. Damage Taken:</b>', taken,
+                                "<b>Times KO'd:</b>", kod))) +
+        geom_point(aes(colour = character, size = kod)) +
+        geom_text(aes(label = character)) +
+        labs(x = "Average Damage Taken",
+             y = "Average Damage Dealt",
+             size = "Times KO'd",
+             colour = NULL) +
+        scale_x_continuous(limits = c(0,50),
+                           breaks = c(0,10,20,30,40,50)) +
+        scale_y_continuous(limits = c(0,50),
+                           breaks = c(0,10,20,30,40,50)) +
+        scale_colour_manual(values = vm_palette) +
+        theme_bw() +
+        theme(legend.position = "none",
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.background = element_blank(),
+              legend.background = element_blank(),
+              axis.title = element_text(face = "bold"),
+              axis.text = element_text(face = "bold"))
+      
+      ggplotly(bubble_plot_av, tooltip = c("text")) %>%
+        layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
+               paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
+        config(displayModeBar = F)
+      
+    } else{
+    
     bubble_plot_av <- bubble_data_av %>%
       ggplot(aes(x = taken, y = dealt, size = kod,
                  text = paste('<b>Character:</b>', character,
                               '<br><b>Av. Damage Dealt:</b>', dealt,
                               '<b>Av. Damage Taken:</b>', taken,
                               "<b>Times KO'd:</b>", kod))) +
-      geom_smooth(aes(group = 1), formula = y ~ x, method = "lm", colour = "black", size = 0.5,
-                  se = FALSE) +
       geom_point(aes(colour = character)) +
       labs(x = "Average Damage Taken",
            y = "Average Damage Dealt",
@@ -597,6 +666,7 @@ shinyServer <- function(input, output, session) {
       layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
              paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
       config(displayModeBar = F)
+    }
     
   })
   

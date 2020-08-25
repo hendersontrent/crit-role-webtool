@@ -220,10 +220,14 @@ shinyUI(navbarPage(theme = "corp-styles.css",
                                                                  p("Hover over a point to see details."),
                                                                  column(5,
                                                                         h4("Total Damage Dealt and Taken and Total Times KO'd"),
+                                                                        radioButtons("name_selec_1", "Do you want character names on the plot?", choices = cluster_choices,
+                                                                                     selected = cluster_choices[1], inline = TRUE),
                                                                         shinycssloaders::withSpinner(plotlyOutput("bubble_vm", height = "550px"))),
                                                                  column(1),
                                                                  column(5,
                                                                         h4("Average Damage Dealt and Taken and Total Times KO'd"),
+                                                                        radioButtons("name_selec_2", "Do you want character names on the plot?", choices = cluster_choices,
+                                                                                     selected = cluster_choices[1], inline = TRUE),
                                                                         shinycssloaders::withSpinner(plotlyOutput("bubble_vm_av", height = "550px")))
                                                  )
                                                 )

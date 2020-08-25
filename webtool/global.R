@@ -68,7 +68,7 @@ the_palette <- c("Beau" = "#A0E7E5",
                  "Yasha" = "#F7C9B6",
                  "Molly" = "#E7625F")
 
-vm_palette <- c("#A0E7E5","#75E6DA","#189AB4","#05445E","#9571AB",
+vm_palette <- c("#A0E7E5","#FEB06A","#189AB4","#05445E","#9571AB",
                  "#FD62AD","#F7C9B6","#E7625F")
 
 # Make a palette for the state space model
