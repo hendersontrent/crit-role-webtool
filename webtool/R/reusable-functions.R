@@ -295,7 +295,6 @@ money_prep <- function(data){
     mutate(coin = str_to_title(coin),
            type = str_to_title(type)) %>%
     drop_na() %>%
-    filter(episode != "TOTALS") %>%
     mutate(coin = factor(coin, levels = c("Platinum", "Gold", "Silver", "Copper")))
   
 }
@@ -353,16 +352,24 @@ spell_prep <- function(data){
            casts = 2) %>%
     mutate(spell_level = "Level 6")
   
-  spell_unknown <- data %>%
+  spell_7 <- data %>%
     clean_names() %>%
     dplyr::select(c(15:16)) %>%
     rename(spell = 1,
            casts = 2) %>%
-    mutate(spell_level = "Level 1")
+    mutate(spell_level = "Level 7")
+  
+  spell_unknown <- data %>%
+    clean_names() %>%
+    dplyr::select(c(17:18)) %>%
+    rename(spell = 1,
+           casts = 2) %>%
+    mutate(spell_level = "Unknown")
   
   # Bind all
   
-  spells <- bind_rows(cantrip, spell_1, spell_2, spell_3, spell_4, spell_5, spell_6, spell_unknown) %>%
+  spells <- bind_rows(cantrip, spell_1, spell_2, spell_3, spell_4, 
+                      spell_5, spell_6, spell_7, spell_unknown) %>%
     drop_na()
   
   return(spells)
@@ -465,7 +472,7 @@ spell_prep_vm <- function(data){
     dplyr::select(c(21:22)) %>%
     rename(spell = 1,
            casts = 2) %>%
-    mutate(spell_level = "Level 1")
+    mutate(spell_level = "Unknown")
   
   # Bind all
   

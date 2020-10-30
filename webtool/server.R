@@ -292,60 +292,6 @@ shinyServer <- function(input, output, session) {
     
   })
   
-  # LOESS Damage
-  
-  output$loess_dam <- renderPlotly({
-    
-    loess_dam <- dam_heals %>%
-      ggplot(aes(x = episode, y = damage, group = character)) +
-      geom_point(colour = "grey50") +
-      geom_smooth(method = "loess", se = FALSE, aes(group = 1), colour = "#189AB4") +
-      labs(x = "Episode",
-           y = "Damage") +
-      theme_bw() +
-      theme(legend.position = "none",
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold"))
-    
-    ggplotly(loess_dam) %>%
-      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
-             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
-      config(displayModeBar = F)
-    
-  })
-  
-  # LOESS Healing
-  
-  output$loess_heal <- renderPlotly({
-    
-    loess_heal <- dam_heals %>%
-      ggplot(aes(x = episode, y = healing, group = character)) +
-      geom_point(colour = "grey50") +
-      geom_smooth(method = "loess", se = FALSE, aes(group = 1), colour = "#189AB4") +
-      labs(x = "Episode",
-           y = "Healing") +
-      theme_bw() +
-      theme(legend.position = "none",
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_blank(),
-            legend.background = element_blank(),
-            axis.title = element_text(face = "bold"),
-            axis.text = element_text(face = "bold"))
-    
-    ggplotly(loess_heal) %>%
-      layout(plot_bgcolor  = "rgba(255, 255, 255, 0.2)",
-             paper_bgcolor = "rgba(255, 255, 255, 0.2)") %>%
-      config(displayModeBar = F)
-    
-  })
-  
   #------------------------MONEY TAB---------------------------------------
   
   output$waterfall <- renderPlot({
@@ -434,7 +380,7 @@ shinyServer <- function(input, output, session) {
                        Source = 1,                 # column number
                        Target = 3,                 # column number
                        linkDistance = 75,          # distance between nodes
-                       charge = -15,                # big negative = further away
+                       charge = -15,               # big negative = further away
                        fontSize = 12,              
                        fontFamily = "serif",       
                        linkColour = "#189AB4",     # colour of edges
